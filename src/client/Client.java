@@ -1,6 +1,7 @@
 package client;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 /*
  * The Client class contains all relevant data for the client and 
@@ -32,6 +33,15 @@ public class Client implements Runnable, KeyListener{
 	public void run() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Textures();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
