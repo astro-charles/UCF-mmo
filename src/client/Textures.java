@@ -77,7 +77,7 @@ public class Textures {
 			}
 		}
 		
-		//Attempt a perlin noise
+		//Attempt at perlin noise
 		for (int i=0; i<mapSize; i++){
 			for (int j=0; j<mapSize; j++) {
 				System.out.println(MathUtil.perlinPoint(i, j, 16));
@@ -93,7 +93,7 @@ public class Textures {
 		
 	
 		GameObject[] T = new GameObject[C.size()];
-		mapViewer(C.toArray(T));
+		//mapViewer(C.toArray(T));
 	}
 	
 	private void loadTrees() throws IOException {
@@ -107,7 +107,7 @@ public class Textures {
 
  	private void loadGrass() throws IOException{
 		
-		imageViewer("images/map/GRS2ROC.bmp");
+		//imageViewer("images/map/GRS2ROC.bmp");
 		BufferedImage img = ImageIO.read(new File("images/map/GRS2ROC.bmp"));
 		
 		grass = new BufferedImage[15];
@@ -132,6 +132,10 @@ public class Textures {
 		
 	}
 	
+ 	
+ 	/*
+ 	 * Helper functions to view imported images and manipulate them
+ 	 */
 	public static void imageViewer(String s) throws IOException {
 		BufferedImage img = ImageIO.read(new File(s));
 		
