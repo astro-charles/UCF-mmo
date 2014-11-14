@@ -2,46 +2,44 @@ package client;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import objects.GameObject;
+import util.MathUtil;
+import util.Textures;
 
 /*
  * The Client class contains all relevant data for the client and 
  * is in charge of updating the screen, storing game objects, and
- * communicating with the server.
+ * communicating with the server. It will also handle keyboard 
+ * events (use key binding not key listener)
  */
 
-public class Client implements Runnable, KeyListener{
+public class Client implements Runnable{
+	private ArrayList<GameObject> allMapObjects;
+	private static GameGui GUI;
 
+	
+	
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+	//Updates client every second
 	public void run() {
-		// TODO Auto-generated method stub
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
 	public static void main(String[] args) {
-		try {
-			new Textures();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		Textures.doAll();
+		GUI = new GameGui();
+		GUI.refreshObjects(MathUtil.genObjects(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
+		Thread t = new Thread(GUI);
+		t.start();
 	}
 
 }

@@ -1,4 +1,4 @@
-package client;
+package util;
 /*
  * Helper class to load in images for the game, view those images, generate a map for the game,
  * and test out how to display the graphics
@@ -10,29 +10,31 @@ import java.awt.event.KeyListener;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import objects.GameObject;
-import util.MathUtil;
 
 public class Textures {
 	public static BufferedImage[] grass;	//Grass images
 	public static BufferedImage[] trees;	//Tree images
 	public static BufferedImage Map;	//Array of images making up the map
-	private int RGBfilter = -11836545;		//Integer value of color to filter
-	private int mapSize = 100;
-	private static int startX = 0;			//Temporary variables for the map drawer to use
-	private static int startY = 0;			//
+	private static int RGBfilter = -11836545;		//Integer value of color to filter
+	private static int mapSize = 100;
 	private static int shiftX = 0;
 	private static int shiftY = 0;
 	
-	public Textures() throws IOException {
-		loadGrass();
-		loadTrees();
+	public static void doAll() {
+		try {
+			loadGrass();
+			loadTrees();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		generateMap();
 	}
 	
@@ -41,7 +43,7 @@ public class Textures {
 	 * Will only be used once when finished and
 	 * it will be outputed to a file
 	*/
-	private void generateMap() {
+	public static void generateMap() {
 		
 		Map = new BufferedImage(40*mapSize, 40*mapSize, BufferedImage.TYPE_4BYTE_ABGR);
 		
@@ -62,41 +64,11 @@ public class Textures {
 			}
 		}
 		
-		
-		
-		ArrayList<GameObject> C = new ArrayList<GameObject>();
-		for (int i=0; i<tiles.length; i++) {
-			for (int j=0; j<tiles[i].length; j++) {
-				if (i == 0 || j == 0 || i == tiles.length-1 || j == tiles.length-1) {
-					GameObject tmp = new GameObject();
-					tmp.setLocation(new float[] {i*40-3*8,j*40-3*8});
-					tmp.setDimension(new Dimension(10,20));
-					tmp.setTexture(trees[0]);
-					C.add(tmp);
-				}
-			}
-		}
-		
-		//Attempt at perlin noise
-		for (int i=0; i<mapSize; i++){
-			for (int j=0; j<mapSize; j++) {
-				System.out.println(MathUtil.perlinPoint(i, j, 16));
-				if (MathUtil.perlinPoint(i, j, 100) == 1) {
-					GameObject tmp = new GameObject();
-					tmp.setLocation(new float[] {i*40,j*40});
-					tmp.setDimension(new Dimension(10,20));
-					tmp.setTexture(trees[0]);
-					C.add(tmp);
-				}
-			}
-		}
-		
-	
-		GameObject[] T = new GameObject[C.size()];
+		//GameObject[] T = new GameObject[C.size()];
 		//mapViewer(C.toArray(T));
 	}
 	
-	private void loadTrees() throws IOException {
+	public static void loadTrees() throws IOException {
 		BufferedImage img = ImageIO.read(new File("images/map/TREE.GIF"));
 		
 		trees = new BufferedImage[1];
@@ -105,7 +77,7 @@ public class Textures {
 		trees[0] = toBufferedImage(makeColorTransparent(trees[0], Color.getColor(null, RGBfilter)));
 	}
 
- 	private void loadGrass() throws IOException{
+ 	public static void loadGrass() throws IOException{
 		
 		//imageViewer("images/map/GRS2ROC.bmp");
 		BufferedImage img = ImageIO.read(new File("images/map/GRS2ROC.bmp"));
@@ -131,8 +103,6 @@ public class Textures {
 		grass[13] = img.getSubimage(45*8, 30*8+1, w, h);	//bottom right big
 		
 	}
-	
- 	
  	/*
  	 * Helper functions to view imported images and manipulate them
  	 */
@@ -144,7 +114,9 @@ public class Textures {
 		j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Container c = j.getContentPane();
+		
 		JPanel p = new JPanel() {
+		
 			protected void paintComponent(Graphics g) {
 				
 				int scale = 8;
