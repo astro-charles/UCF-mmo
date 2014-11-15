@@ -21,7 +21,7 @@ public class Textures {
 	public static BufferedImage[] grass;	//Grass images
 	public static BufferedImage[] trees;	//Tree images
 	public static BufferedImage Map;	//Array of images making up the map
-	private static int RGBfilter = -11836545;		//Integer value of color to filter
+	private static int RGBfilterTrees = -11836545;		//Integer value of color to filter
 	private static int mapSize = 100;
 	private static int shiftX = 0;
 	private static int shiftY = 0;
@@ -74,7 +74,7 @@ public class Textures {
 		trees = new BufferedImage[1];
 		
 		trees[0] = img.getSubimage(15*8, 20*8-1, 10*8, 15*8);
-		trees[0] = toBufferedImage(makeColorTransparent(trees[0], Color.getColor(null, RGBfilter)));
+		trees[0] = toBufferedImage(makeColorTransparent(trees[0], Color.getColor(null, RGBfilterTrees)));
 	}
 
  	public static void loadGrass() throws IOException{
@@ -103,9 +103,8 @@ public class Textures {
 		grass[13] = img.getSubimage(45*8, 30*8+1, w, h);	//bottom right big
 		
 	}
- 	/*
- 	 * Helper functions to view imported images and manipulate them
- 	 */
+ 	
+ 	//Helper functions to view imported images and manipulate them
 	public static void imageViewer(String s) throws IOException {
 		BufferedImage img = ImageIO.read(new File(s));
 		

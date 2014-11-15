@@ -4,6 +4,8 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.Timer;
+
 import objects.GameObject;
 import util.MathUtil;
 import util.Textures;
@@ -38,8 +40,11 @@ public class Client implements Runnable{
 		Textures.doAll();
 		GUI = new GameGui();
 		GUI.refreshObjects(MathUtil.genObjects(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
-		Thread t = new Thread(GUI);
+		Timer t = new Timer(10, GUI);
 		t.start();
+		
+		//Thread t = new Thread(GUI);
+		//t.start();
 	}
 
 }

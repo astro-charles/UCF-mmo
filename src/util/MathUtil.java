@@ -31,6 +31,9 @@ public class MathUtil {
 	
 	public static ArrayList<GameObject> genObjects(int w, int h) {
 		
+		w = w/40;
+		h = h/40;
+		
 		if( Textures.trees == null)
 			try {
 				Textures.loadTrees();
