@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import objects.GameObject;
+import objects.MapElements;
 
 public class MathUtil {
 	
@@ -29,7 +30,7 @@ public class MathUtil {
 	    return (value / initialSize)%2;
 	}
 	
-	public static ArrayList<GameObject> genObjects(int w, int h) {
+	public static ArrayList<MapElements> genMap(int w, int h) {
 		
 		w = w/40;
 		h = h/40;
@@ -42,28 +43,24 @@ public class MathUtil {
 				e.printStackTrace();
 			}
 		
-		ArrayList<GameObject> C = new ArrayList<GameObject>();
+		ArrayList<MapElements> C = new ArrayList<MapElements>();
 		for (int i=0; i<w; i++) {
 			for (int j=0; j<h; j++) {
 				if (i == 0 || j == 0 || i == w-1 || j == h-1) {
-					GameObject tmp = new GameObject();
-					tmp.setLocation(new float[] {i*40-3*8,j*40-3*8});
-					tmp.setDimension(new Dimension(10,20));
-					tmp.setTexture(Textures.trees[0]);
+					MapElements tmp = new MapElements(Textures.trees[0],i*40-3*8,j*40-3*8);
+					tmp.setHitbox(16, tmp.getBounds().height/2, 16, 8);
 					C.add(tmp);
 				}
 			}
 		}
 		
-		//Attempt at perlin noise
+		//Perlin noise
 		for (int i=0; i<w; i++){
 			for (int j=0; j<h; j++) {
 				
 				if (MathUtil.perlinPoint(i, j, 100) == 1) {
-					GameObject tmp = new GameObject();
-					tmp.setLocation(new float[] {i*40,j*40});
-					tmp.setDimension(new Dimension(10,20));
-					tmp.setTexture(Textures.trees[0]);
+					MapElements tmp = new MapElements(Textures.trees[0], i*40, j*40);
+					tmp.setHitbox(16, tmp.getBounds().height/2, 16, 8);
 					C.add(tmp);
 				}
 			}

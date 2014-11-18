@@ -20,8 +20,11 @@ import objects.GameObject;
 public class Textures {
 	public static BufferedImage[] grass;	//Grass images
 	public static BufferedImage[] trees;	//Tree images
-	public static BufferedImage Map;	//Array of images making up the map
+	public static BufferedImage Map;		//Array of images making up the map
+	public static BufferedImage[][][] vlad;	//Animation images for the player
+	
 	private static int RGBfilterTrees = -11836545;		//Integer value of color to filter
+	private static int RGBfilterMobs = -10599895;
 	private static int mapSize = 100;
 	private static int shiftX = 0;
 	private static int shiftY = 0;
@@ -30,6 +33,7 @@ public class Textures {
 		try {
 			loadGrass();
 			loadTrees();
+			loadVlad();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +56,7 @@ public class Textures {
 			tiles[i] = new BufferedImage[mapSize];
 			for (int j=0; j<tiles[i].length; j++) {
 				if (i == j)
-					tiles[i][j] = grass[5];
+					tiles[i][j] = grass[3];
 				else
 					tiles[i][j] = grass[3];
 			}
@@ -68,6 +72,7 @@ public class Textures {
 		//mapViewer(C.toArray(T));
 	}
 	
+	//Loads in the tree tiles
 	public static void loadTrees() throws IOException {
 		BufferedImage img = ImageIO.read(new File("images/map/TREE.GIF"));
 		
@@ -77,6 +82,7 @@ public class Textures {
 		trees[0] = toBufferedImage(makeColorTransparent(trees[0], Color.getColor(null, RGBfilterTrees)));
 	}
 
+	//Loads in the grass tiles
  	public static void loadGrass() throws IOException{
 		
 		//imageViewer("images/map/GRS2ROC.bmp");
@@ -104,6 +110,34 @@ public class Textures {
 		
 	}
  	
+ 	public static void loadVlad() throws IOException {
+ 		/*
+ 		 * 0 = walk images 
+ 		 * 1 = attack images
+ 		 * 2 = hit images
+ 		 * 
+ 		 * For each of those, there are eight different directions
+ 		 * the character can face. For each direction, there are 
+ 		 * eight different animation images
+ 		 */
+ 		
+ 		vlad = new BufferedImage[3][8][8];
+ 		
+ 		String path = "images/vlad/vlad sword/";
+ 		String[] types = { "walking ", "attack ",  "been hit " };
+ 		String[] direction = { "e", "n", "ne", "nw", "s", "se", "sw", "w"};
+ 		
+ 		int k=0;
+ 		for (BufferedImage[][] B : vlad) {
+ 			for (int i=0; i<B.length; i++) {
+ 				for (int j=0; j<B[i].length; j++) {
+ 					B[i][j] = ImageIO.read(new File(path + types[k] + direction[i] + String.format("%04d", j) + ".bmp"));
+ 					B[i][j] = toBufferedImage(makeColorTransparent(B[i][j], Color.getColor(null, RGBfilterMobs)));
+ 				}
+ 			}
+ 			k++;
+ 		}
+ 	}
  	//Helper functions to view imported images and manipulate them
 	public static void imageViewer(String s) throws IOException {
 		BufferedImage img = ImageIO.read(new File(s));
@@ -230,8 +264,8 @@ public class Textures {
 				g.drawImage(Map.getSubimage(shiftX, shiftY, width, height),0,0,null);
 				//Draws game objects, checks if they are in the screen view 
 				for (GameObject G : obj) {
-					int X = (int)G.getLocation()[0];
-					int Y = (int)G.getLocation()[1];
+					int X = (int)G.getBounds().x;
+					int Y = (int)G.getBounds().y;
 					
 					if (X >= shiftX-buff && X <= shiftX+width+buff && Y >= shiftY-buff && Y <= shiftY+height+buff)
 						g.drawImage(G.getTexture(), X-shiftX, Y-shiftY, null);

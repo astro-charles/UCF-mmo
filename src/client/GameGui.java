@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,12 +17,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import com.sun.glass.events.KeyEvent;
-
 import objects.GameObject;
+import objects.MapElements;
 import util.Textures;
 
-public class GameGui extends JPanel implements Runnable, KeyListener, ActionListener{
+public class GameGui extends JPanel implements KeyListener, ActionListener{
 
 	//Window object
 	private final JFrame window = new JFrame("2DMMO");
@@ -35,33 +35,40 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 	private int posX = width/2;			//Character position on the screen
 	private int posY = height/2;		//
 	private int shiftX = 0;				//How much to shift the map in X plane
-	private int shiftY = 0;				//How much to shift the map in Y plane
-	private int buff = 100;				//Amount of pixels off screen on the boarders, used for drawing incoming objects
+	private int shiftY = 300;			//How much to shift the map in Y plane
+	
+	
+	//Variables used to check collision before changing the actual position
+	private int cposX = 0;			
+	private int cposY =  0;		
+	private int cshiftX = 0;				
+	private int cshiftY = 0;				
+	
+	private int buff = 100;							//Amount of pixels off screen on the boarders, used for drawing incoming objects
 	
 	private boolean[] keyHolds = new boolean[4];	//Tracks which keys are being presses 0=W, 1=A, 2=S, 3=D
-	private int characterDirection = 0; 			//0-7, the eight possible ways for them to face
+	private int characterDirection = 1; 			//0-7, the eight possible ways for them to face
+	private int characterStep = 3;					//Current step position the character is on
+	private final int walkSpeed = 4;				//Speed the character walk animation plays, not speed across map
+	private int walkTimer;							//Timer to help control speed
 	
-	//These are the map size variables
-	//The actual pixel size is a multiple of 40
+	//Map size in pixels
 	private int boundsX = 100*40;
 	private int boundsY = 100*40;
 	
-	ArrayList<GameObject> onScreenObjs;
-	BufferedImage screen;
+	ArrayList<MapElements> onScreenObjs;
 	BufferedImage map;
+	BufferedImage character;
+
 	
 	public GameGui() {
 		
 		//Gets the map image
 		map = Textures.Map;
-		
-		//Buffered image to draw to
-		screen = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		character = Textures.vlad[0][characterDirection][characterStep];
 		
 		//Sets window defaults
 		makeWindow();
-		
-		//setKeyBindings();
 	}
 	
 	private void makeWindow() {
@@ -82,6 +89,7 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		window.setVisible(true);
 	}
 	
+	/*
 	private void setKeyBindings() {
 		this.getInputMap().put(KeyStroke.getKeyStroke('w'), "up");
 		this.getInputMap().put(KeyStroke.getKeyStroke('a'), "left");
@@ -126,6 +134,7 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		
 	}
 	
+	/*
 	@Override
 	//This is the thread that will refresh the game display at 60fps
 	public void run() {
@@ -140,7 +149,7 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		//Thread loop for the gui
 		while (true) {
 			
-			/*Handles the movement of the map based on key presses*/
+			/*Handles the movement of the map based on key presses
 			if (keyHolds[0]) {
 				decShiftY();
 				change = true;
@@ -189,41 +198,46 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		}
 		
 	}
+	*/
 	
-	//Alternative to run
+	//Refreshes the screen with new content
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-					
-		/*Handles the movement of the map based on key presses*/
-		if (keyHolds[0]) {
-			decShiftY();
-			change = true;
-		}
-		else if (keyHolds[2]){
-			incShiftY();
-			change = true;
-		}
 		
-		if (keyHolds[1]) {
-			decShiftX();
-			change = true;
-		}
-		else if (keyHolds[3]) {
-			incShiftX();
-			change = true;
-		}
+		
+		cposX = 0;			
+		cposY =  0;		
+		cshiftX = 0;				
+		cshiftY = 0;		
+			
+		slideMap();
 				
 		//If there is a change in the map
 		if (change) {
+	
+			if (detectCollision()) {
+				cposX = 0;			
+				cposY =  0;		
+				cshiftX = 0;				
+				cshiftY = 0;
+			}
+			
+			posX += cposX;			
+			posY +=  cposY;		
+			shiftX += cshiftX;				
+			shiftY += cshiftY;
+			
+			updateCharacterWalking();
+			
 			//Check if we are in the map bounds
-			checkBounds();
+			checkShift();
 			
 			//Repaints the change
 			this.repaint();
+			change = false;
 		}
 		
 	}
-	
 	
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent arg0) {
@@ -289,12 +303,17 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 	
 	private void drawObjects(Graphics2D g2) {
 		if (onScreenObjs != null) {
-			for (GameObject G : onScreenObjs) {
-				int X = (int)G.getLocation()[0];
-				int Y = (int)G.getLocation()[1];
+			for (MapElements G : onScreenObjs) {
+				int X = G.getBounds().x;
+				int Y = G.getBounds().y;
 				
-				if (X >= shiftX-buff && X <= shiftX+width+buff && Y >= shiftY-buff && Y <= shiftY+height+buff)
+				if (X >= shiftX-buff && X <= shiftX+width+buff && Y >= shiftY-buff && Y <= shiftY+height+buff) {
 					g2.drawImage(G.getTexture(), X-shiftX, Y-shiftY, null);
+					//g2.setColor(Color.YELLOW);
+					//g2.drawRect(G.getBounds().x - shiftX, G.getBounds().y - shiftY, G.getBounds().width, G.getBounds().height);
+					//g2.setColor(Color.CYAN);
+					//g2.drawRect(G.getHitBox().x - shiftX, G.getHitBox().y - shiftY, G.getHitBox().width, G.getHitBox().height);
+				}
 			}
 		}
 	}
@@ -307,7 +326,19 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		g2.drawImage(map.getSubimage(shiftX, shiftY, width, height), 0,0,width, height,null);
 		
 		//Draws in game objects
-		drawObjects(g2);	
+		drawObjects(g2);
+		
+		g2.setColor(Color.PINK);
+		g2.drawImage(character, posX-character.getWidth()/2, posY-character.getHeight()/2, null);
+		
+		/*
+		g2.drawRect(
+				posX + cposX -character.getWidth()/2 + (character.getWidth()-30)/2,
+				posY + cposY -character.getHeight()/2 + (character.getHeight()-70)/2 + 40,
+				30,
+				30);
+		*/
+		
 	}
 	
 	//When changing map elements, set this
@@ -315,14 +346,107 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 		change = true;
 	}
 	
-	public void refreshObjects(ArrayList<GameObject> N) {
+	public void refreshObjects(ArrayList<MapElements> N) {
 		onScreenObjs = N;
 		changed();
 	}
 	
+	private void slideMap() {
+		/*Handles the movement of the map based on key presses*/
+		//Up
+		if (keyHolds[0]) {
+			
+			if (shiftY == 0 || shiftY == boundsY-height)	//If at edge of map, change character position
+				decPosY();
+			else
+				decShiftY();	//Else, shift map
+			
+			change = true;
+		}
+		//Down
+		else if (keyHolds[2]){
+			
+			if (posY < height/2 || shiftY == boundsY-height)	//If at edge of map, increment until centered
+				incPosY();
+			else
+				incShiftY();
+			
+			change = true;
+		}
+		
+		//Left
+		if (keyHolds[1]) {
+			
+			if (shiftX == 0 || shiftX == boundsX - width)	//If at edge of map, change character position
+				decPosX();
+			else
+				decShiftX();	//Else, shift map
+			
+			change = true;
+		}
+		//Right
+		else if (keyHolds[3]) {
+			
+			if (posX < width/2 || shiftX == boundsX - width)		//If at edge of map, increment until centered
+				incPosX();
+			else
+				incShiftX();
+			change = true;
+		}
+	}
+	
+	private boolean detectCollision() {
+		
+		Rectangle g = new Rectangle(
+				posX + shiftX + cposX + cshiftX + (character.getWidth()-30)/2 -character.getWidth()/2,
+				posY + shiftY + cposY + cshiftY +(character.getHeight()-70)/2 -character.getHeight()/2 + 40,
+				30,
+				30);
+		
+		for (MapElements m : onScreenObjs) {
+			if (m.getHitBox().intersects(g)) {
+				System.out.println("Collision");
+				return true;
+			}
+		
+		}
+		
+		return false;
+	}
+	
+	private void updateCharacterWalking() {
+		
+		if (walkTimer++ > walkSpeed) {
+			
+			walkTimer = 0;
+			characterStep += 1;
+			if (characterStep > 7)
+				characterStep = 0;
+		
+			if (keyHolds[0])
+				characterDirection = 1;
+			if (keyHolds[1])
+				characterDirection = 7;
+			if (keyHolds[2]) 
+				characterDirection = 4;
+			if (keyHolds[3])
+				characterDirection = 0;
+			if (keyHolds[0] && keyHolds[3])
+				characterDirection = 2;
+			if (keyHolds[0] && keyHolds[1])
+				characterDirection = 3;
+			if (keyHolds[2] && keyHolds[3])
+				characterDirection = 5;
+			if (keyHolds[2] && keyHolds[1])
+				characterDirection = 6;
+		
+		character = Textures.vlad[0][characterDirection][characterStep];
+		}
+	}
+	
 	//Checks if the shift variable is within acceptable limits,
 	//resets them if they aren't
-	private void checkBounds() {
+	private void checkShift() {
 		if (shiftX > boundsX-width)
 			shiftX = boundsX-width;
 		if (shiftX < 0)
@@ -331,6 +455,17 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 			shiftY = boundsY-height;
 		if (shiftY < 0)
 			shiftY = 0;
+		if(posX < 0)
+			posX = 0;
+		if (posY < 0)
+			posY = 0;
+		
+		/*
+		if (shiftX != 0)	
+			posX = width/2;		
+		if (shiftY != 0)
+			posY = height/2;
+			*/	
 	}
 	
 	///////////Get methods//////////////
@@ -355,19 +490,35 @@ public class GameGui extends JPanel implements Runnable, KeyListener, ActionList
 	private int pixChange = 3;
 	
 	public void incShiftX() {
-		shiftX += pixChange;
+		cshiftX += pixChange;
 	}
 	
 	public void incShiftY() {
-		shiftY += pixChange;
+		cshiftY += pixChange;
 	}
 
 	public void decShiftX() {
-		shiftX -= pixChange;
+		cshiftX -= pixChange;
 	}
 
 	public void decShiftY() {
-		shiftY -= pixChange;
+		cshiftY -= pixChange;
+	}
+	
+	public void incPosX() {
+		cposX += pixChange;
+	}
+	
+	public void incPosY() {
+		cposY += pixChange;
+	}
+
+	public void decPosX() {
+		cposX -= pixChange;
+	}
+
+	public void decPosY() {
+		cposY -= pixChange;
 	}
 
 	

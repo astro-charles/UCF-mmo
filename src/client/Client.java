@@ -39,8 +39,8 @@ public class Client implements Runnable{
 		
 		Textures.doAll();
 		GUI = new GameGui();
-		GUI.refreshObjects(MathUtil.genObjects(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
-		Timer t = new Timer(10, GUI);
+		GUI.refreshObjects(MathUtil.genMap(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
+		Timer t = new Timer(20, GUI);
 		t.start();
 		
 		//Thread t = new Thread(GUI);
