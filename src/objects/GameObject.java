@@ -1,29 +1,28 @@
 package objects;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
 
 public class GameObject {
 	private int ID;
-	private float[] location;
-	private Dimension size;
+	private Rectangle bounds;
+	private Rectangle hitBox;
 	private BufferedImage texture;
 	
-	
-	public void setDimension(Dimension D) {
-		size = D;
+	public GameObject(BufferedImage I, int x, int y) {
+		bounds = new Rectangle(x,y,I.getWidth(),I.getHeight());
+		hitBox = bounds;
+		texture = I;
 	}
 	
-	public Dimension getDimension() {
-		return size;
+	public Rectangle getBounds() {
+		return bounds;
 	}
 	
-	public void setLocation(float[] L) {
-		location = L;
-	}
-	
-	public float[] getLocation() {
-		return location;
+	public void setBounds(Rectangle R) {
+		bounds = R;
 	}
 	
 	public BufferedImage getTexture() {
@@ -32,5 +31,17 @@ public class GameObject {
 	
 	public void setTexture(BufferedImage I) {
 		texture = I;
+	}
+	
+	public void setHitbox(int offsetX, int offsetY, int cutX, int cutY) {
+		hitBox = new Rectangle(
+				bounds.getLocation().x + offsetX,
+				bounds.getLocation().y + offsetY,
+				(int)bounds.getWidth() - offsetX - cutX,
+				(int)bounds.getHeight() - offsetY - cutY
+				);
+	}
+	public Rectangle getHitBox() {
+		return hitBox;
 	}
 }
