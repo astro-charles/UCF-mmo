@@ -19,6 +19,7 @@ import javax.swing.KeyStroke;
 
 import objects.GameObject;
 import objects.MapElements;
+import objects.Mobs;
 import util.Textures;
 
 public class GameGui extends JPanel implements KeyListener, ActionListener{
@@ -52,20 +53,41 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 	private final int walkSpeed = 4;				//Speed the character walk animation plays, not speed across map
 	private int walkTimer;							//Timer to help control speed
 	
+	private int maxHealth;
+	private int charXP;
+	private int charHealth;
+	private int charCoins;
+	private int charLvl;
+	private final int hitCons = 5;
+	
+	private int attackTimer  = 0;
+	//private final int attackSpeed = 10;
+	private boolean attacking = false;
+	
 	//Map size in pixels
 	private int boundsX = 100*40;
 	private int boundsY = 100*40;
 	
-	ArrayList<MapElements> onScreenObjs;
+	//ArrayList<MapElements> onScreenObjs;
+	DrawMoving movers;
 	BufferedImage map;
 	BufferedImage character;
 
 	
-	public GameGui() {
+	public GameGui(DrawMoving d, int bonX, int bonY) {
+		movers = d;
+		boundsX = bonX;
+		boundsY = bonY;
 		
 		//Gets the map image
 		map = Textures.Map;
 		character = Textures.vlad[0][characterDirection][characterStep];
+		
+		maxHealth = 100;
+		charHealth = maxHealth;
+		charCoins = 10;
+		charXP = 0;
+		charLvl = 1;
 		
 		//Sets window defaults
 		makeWindow();
@@ -213,9 +235,15 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		slideMap();
 				
 		//If there is a change in the map
-		if (change) {
+		if (change || attacking) {
+			
+			Rectangle r = new Rectangle(
+					posX + shiftX + cposX + cshiftX + (character.getWidth()-30)/2 -character.getWidth()/2,
+					posY + shiftY + cposY + cshiftY +(character.getHeight()-70)/2 -character.getHeight()/2 + 40,
+					30,
+					30);
 	
-			if (detectCollision()) {
+			if (movers.detectCollision(r)) {
 				cposX = 0;			
 				cposY =  0;		
 				cshiftX = 0;				
@@ -227,7 +255,10 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 			shiftX += cshiftX;				
 			shiftY += cshiftY;
 			
-			updateCharacterWalking();
+			if (attacking)
+				updateCharacterAttack();
+			else
+				updateCharacterWalking();
 			
 			//Check if we are in the map bounds
 			checkShift();
@@ -239,6 +270,8 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		
 	}
 	
+	
+
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent arg0) {
 			switch (arg0.getKeyChar()) {
@@ -266,6 +299,9 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 				
 				keyHolds[3] = true;
 				break;
+			case ' ':
+				attacking = true;
+				attackTimer = 0;
 			default:
 				System.out.println("Invalid key press.");
 				break;
@@ -301,22 +337,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		
 	}
 	
-	private void drawObjects(Graphics2D g2) {
-		if (onScreenObjs != null) {
-			for (MapElements G : onScreenObjs) {
-				int X = G.getBounds().x;
-				int Y = G.getBounds().y;
-				
-				if (X >= shiftX-buff && X <= shiftX+width+buff && Y >= shiftY-buff && Y <= shiftY+height+buff) {
-					g2.drawImage(G.getTexture(), X-shiftX, Y-shiftY, null);
-					//g2.setColor(Color.YELLOW);
-					//g2.drawRect(G.getBounds().x - shiftX, G.getBounds().y - shiftY, G.getBounds().width, G.getBounds().height);
-					//g2.setColor(Color.CYAN);
-					//g2.drawRect(G.getHitBox().x - shiftX, G.getHitBox().y - shiftY, G.getHitBox().width, G.getHitBox().height);
-				}
-			}
-		}
-	}
+	
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
@@ -326,29 +347,25 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		g2.drawImage(map.getSubimage(shiftX, shiftY, width, height), 0,0,width, height,null);
 		
 		//Draws in game objects
-		drawObjects(g2);
+		movers.drawObjects(g2, shiftX, shiftY, width, height);
+		movers.drawMobs(g2, shiftX, shiftY, width, height);
 		
 		g2.setColor(Color.PINK);
 		g2.drawImage(character, posX-character.getWidth()/2, posY-character.getHeight()/2, null);
 		
-		/*
+		
 		g2.drawRect(
 				posX + cposX -character.getWidth()/2 + (character.getWidth()-30)/2,
 				posY + cposY -character.getHeight()/2 + (character.getHeight()-70)/2 + 40,
 				30,
 				30);
-		*/
+		
 		
 	}
 	
 	//When changing map elements, set this
 	public void changed() {
 		change = true;
-	}
-	
-	public void refreshObjects(ArrayList<MapElements> N) {
-		onScreenObjs = N;
-		changed();
 	}
 	
 	private void slideMap() {
@@ -395,24 +412,6 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		}
 	}
 	
-	private boolean detectCollision() {
-		
-		Rectangle g = new Rectangle(
-				posX + shiftX + cposX + cshiftX + (character.getWidth()-30)/2 -character.getWidth()/2,
-				posY + shiftY + cposY + cshiftY +(character.getHeight()-70)/2 -character.getHeight()/2 + 40,
-				30,
-				30);
-		
-		for (MapElements m : onScreenObjs) {
-			if (m.getHitBox().intersects(g)) {
-				System.out.println("Collision");
-				return true;
-			}
-		
-		}
-		
-		return false;
-	}
 	
 	private void updateCharacterWalking() {
 		
@@ -444,6 +443,13 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		}
 	}
 	
+	private void updateCharacterAttack() {
+		if (attackTimer++ < 12) 
+			character = Textures.vlad[1][characterDirection][attackTimer-1];
+		else 
+			attacking = false;
+		
+	}
 	//Checks if the shift variable is within acceptable limits,
 	//resets them if they aren't
 	private void checkShift() {
@@ -467,6 +473,17 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 			posY = height/2;
 			*/	
 	}
+	
+	/*
+	public void refreshMapObjects(ArrayList<MapElements> N) {
+		onScreenObjs = N;
+		changed();
+	}
+	
+	public void refreshMobs(ArrayList<Mobs> M) {
+		mobs = M;
+	}
+	*/
 	
 	///////////Get methods//////////////
 	public int getWidth() {

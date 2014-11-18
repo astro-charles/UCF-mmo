@@ -3,9 +3,11 @@ package util;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import objects.GameObject;
 import objects.MapElements;
+import objects.Mobs;
 
 public class MathUtil {
 	
@@ -67,5 +69,32 @@ public class MathUtil {
 		}
 		
 		return C;
+	}
+
+	
+	public static ArrayList<Mobs> genMobs(ArrayList<MapElements> e, int w, int h) {
+		ArrayList<Mobs> m = new ArrayList<Mobs>();
+		Random rand = new Random();
+		
+		for (int i=0; i<50; i++) {
+				boolean hit = false;
+				Mobs tmp;
+			do {
+				
+				int x = rand.nextInt(w-50)+1;
+				int y = rand.nextInt(w-50)+1;
+			
+				tmp = new Mobs(Textures.skell[2][0][0], x, y);
+				
+				for (MapElements ME : e)
+					if (ME.getBounds().intersects(tmp.getBounds()))
+						hit = true;
+				
+			} while (!hit);
+			m.add(tmp);
+		}
+		return m;
+		
+		
 	}
 }

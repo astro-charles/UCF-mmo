@@ -22,6 +22,7 @@ public class Textures {
 	public static BufferedImage[] trees;	//Tree images
 	public static BufferedImage Map;		//Array of images making up the map
 	public static BufferedImage[][][] vlad;	//Animation images for the player
+	public static BufferedImage[][][] skell;
 	
 	private static int RGBfilterTrees = -11836545;		//Integer value of color to filter
 	private static int RGBfilterMobs = -10599895;
@@ -34,6 +35,7 @@ public class Textures {
 			loadGrass();
 			loadTrees();
 			loadVlad();
+			loadSkell();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,7 +123,7 @@ public class Textures {
  		 * eight different animation images
  		 */
  		
- 		vlad = new BufferedImage[3][8][8];
+ 		vlad = new BufferedImage[3][8][];
  		
  		String path = "images/vlad/vlad sword/";
  		String[] types = { "walking ", "attack ",  "been hit " };
@@ -130,6 +132,11 @@ public class Textures {
  		int k=0;
  		for (BufferedImage[][] B : vlad) {
  			for (int i=0; i<B.length; i++) {
+ 				if (k == 1)
+ 					B[i] = new BufferedImage[12];
+ 				else
+ 					B[i] = new BufferedImage[8];
+ 				
  				for (int j=0; j<B[i].length; j++) {
  					B[i][j] = ImageIO.read(new File(path + types[k] + direction[i] + String.format("%04d", j) + ".bmp"));
  					B[i][j] = toBufferedImage(makeColorTransparent(B[i][j], Color.getColor(null, RGBfilterMobs)));
@@ -138,6 +145,43 @@ public class Textures {
  			k++;
  		}
  	}
+ 	
+ 	public static void loadSkell() throws IOException {
+ 		/*
+ 		 * 0 = sprint images 
+ 		 * 1 = attack images
+ 		 * 2 = standing
+ 		 * 
+ 		 * For each of those, there are eight different directions
+ 		 * the character can face. For each direction, there are 
+ 		 * eight different animation images
+ 		 */
+ 		
+ 		skell = new BufferedImage[3][8][];
+ 		
+ 		String path = "images/skelly/swordskel bitmaps/swordskel ";
+ 		String[] types = { "rennt ", "attack ", "steht" };
+ 		String[] direction = { "n", "ne", "nw", "s", "se", "sw","e", "w"};
+ 		
+ 		int k=0;
+ 		for (BufferedImage[][] B : skell) {
+ 			for (int i=0; i<B.length; i++) {
+ 				if (k == 0)
+ 					B[i] = new BufferedImage[9];
+ 				else if (k == 1)
+ 					B[i] = new BufferedImage[10];
+ 				else
+ 					B[i] = new BufferedImage[1];
+ 				
+ 				for (int j=0; j<B[i].length; j++) {
+ 					B[i][j] = ImageIO.read(new File(path + types[k] + (k!=2?direction[i]:"") + String.format("%04d", j) + ".bmp"));
+ 					B[i][j] = toBufferedImage(makeColorTransparent(B[i][j], Color.getColor(null, B[i][j].getRGB(0, 0))));
+ 				}
+ 			}
+ 			k++;
+ 		}
+ 	}
+ 	
  	//Helper functions to view imported images and manipulate them
 	public static void imageViewer(String s) throws IOException {
 		BufferedImage img = ImageIO.read(new File(s));

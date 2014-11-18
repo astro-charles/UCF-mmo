@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 import objects.GameObject;
+import objects.MapElements;
+import objects.Mobs;
 import util.MathUtil;
 import util.Textures;
 
@@ -37,9 +39,18 @@ public class Client implements Runnable{
 	
 	public static void main(String[] args) {
 		
+		int mapX = 100*40;
+		int mapY = mapX;
+		
 		Textures.doAll();
-		GUI = new GameGui();
-		GUI.refreshObjects(MathUtil.genMap(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
+		
+		ArrayList<MapElements> E = MathUtil.genMap(mapX, mapY);
+		ArrayList<Mobs> M = MathUtil.genMobs(E, mapX, mapY);
+		
+		DrawMoving mov = new DrawMoving(M,E);
+		
+		GUI = new GameGui(mov, mapX, mapY);
+		//GUI.refreshMapObjects(MathUtil.genMap(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
 		Timer t = new Timer(20, GUI);
 		t.start();
 		
