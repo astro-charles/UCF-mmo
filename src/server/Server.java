@@ -8,13 +8,20 @@ public class Server extends Thread{
         private ServerSocket server;
 	private Socket socket;
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
+        
 
+        
 	public Server(){
 		try{
-			server = new ServerSocket();
+			server = new ServerSocket(1010);
 		}
 		catch(IOException e){System.out.println(e);}
 	}
+        
+        public static void main(){
+            Server serv = new Server();
+            serv.run();
+        }
         
         @Override
 	public void run(){
