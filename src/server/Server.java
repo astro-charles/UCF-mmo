@@ -9,9 +9,11 @@ import objects.MobPacket;
 public class Server extends Thread{
     private ServerSocket server;
 	private Socket socket;
+	private boolean writing = false;
 
-	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
-    private ArrayList<IOpair> clientPair = new ArrayList<IOpair>();
+	//private ArrayList<Socket> socket = new ArrayList<Socket>();
+	private List<ClientCommunicator> clients = Collections.synchronizedList(new ArrayList<ClientCommunicator>());
+    //private ArrayList<IOpair> clientPair = new ArrayList<IOpair>();
     
 	public Server(){
 		System.out.println("Makeing server");
@@ -31,6 +33,31 @@ public class Server extends Thread{
         
         @Override
 	public void run(){
+        	
+        Thread connector = new Thread() {
+        	
+        	public void run() {
+        		
+        		while (true) {
+        			try{
+        				socket = server.accept();
+        			}
+        			catch(Exception e){
+                         System.out.println("Problem making client socket");
+        			}
+        			
+        			System.out.println("Client size" + clients.size());
+        			
+        			if (socket != null)
+        				createConn();
+        		}
+        	}
+        };
+        
+        connector.start();
+        
+        MobPacket no = new MobPacket("TESTING", 0, 0, false);
+        
 		while(true){
 			
 			/*
@@ -44,28 +71,78 @@ public class Server extends Thread{
 			}
 			*/
 		
-			checkUnpaired();
+			//checkUnpaired();
+			createConn();
 			sendMobs();
 			
-			try{
-				socket = server.accept();
-			}
-			catch(Exception e){
-                            System.out.println("Problem making client socket");
-            }
-			
-			if (socket != null) {
-				System.out.println("Creating Client Comm");
-				clients.add(new ClientCommunicator(socket));
-			}
+	
 		}
 	} 
         
+    private synchronized void createConn() {
+    			clients.add(new ClientCommunicator(socket));
+    }
+ 
+    
+    
+    
+    
+    /*
+    private synchronized void sendMobs() {
+    	ArrayList<MobPacket> tmp = new ArrayList<MobPacket>();
+    
+    	//while (writing){};
+    	
+    	
+    	for (ClientCommunicator in : clients) {
+    		if (in.initialized && in.getComType() == 1) {
+    			System.out.println("Adding to array");
+    			tmp.add(in.getMob());
+    		}
+    			
+    	}
+    	
+    	for (ClientCommunicator out : clients) {
+    		if (out.initialized && out.getComType() == 0) {
+    			System.out.println("Sending out Mobs");
+    			for (MobPacket mob : tmp)
+    				out.sendMob(mob);
+    		}
+    			
+    	}
+    	
+    }
+}
+*/
+        
+    private synchronized void sendMobs() {
+    	if (clients.size() == 0 || clients.size() == 1)
+    		return;
+    	
+    	for (ClientCommunicator to : clients) {
+    		if (to == null)
+    			continue;
+    		if (to.getComType() == 0) {
+    			for (ClientCommunicator data : clients) {
+    				if (to != data) {
+    					if (data.getComType() == 1) {
+    						to.sendMob(data.getMob());
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+}
+    
+     /*
     private void sendMobs() {
+    	//System.out.println("Sending Mobs to Everyone");
     	
     	for (IOpair to : clientPair) {
     		
     		if (to.isFull()) {
+    			System.out.println("Sending to " + to.toString());
     			for (IOpair data : clientPair) {
     				if (to != data) {
     					ClientCommunicator tmp = to.getOutput();
@@ -76,16 +153,20 @@ public class Server extends Thread{
     	}
     	
     }
-        
+        /*
     private void checkUnpaired() {
         	for (ClientCommunicator CC : clients) {
 				if (CC.initialized) {
+					
 					MobPacket tmp = CC.getMob();
 					boolean found = false;
 					
 					for (IOpair P : clientPair) {
 						if (tmp.toString() == P.toString()) {
+							System.out.println("Found matching pair " + P.toString());
+							
 							if (CC.getComType() == 1)  {
+								System.out.println("Input type");
 								if (P.getInput() == null) {
 									P.setInput(CC);
 									clients.remove(CC);
@@ -94,6 +175,7 @@ public class Server extends Thread{
 								}
 							}
 							else if (CC.getComType() == 0) {
+								System.out.println("Output type");
 								if (P.getOutput() == null) {
 									P.setOutput(CC);
 									clients.remove(CC);									
@@ -107,6 +189,7 @@ public class Server extends Thread{
 					}
 					
 					if (!found) {
+						
 						IOpair pair = new IOpair();
 						
 						if (CC.getComType() == 1)  {
@@ -118,6 +201,7 @@ public class Server extends Thread{
 							pair.setMobPacket(CC.getMob());
 						}
 						
+						System.out.println("Creating new pair: " + pair.toString());
 						clientPair.add(pair);
 						
 					}
@@ -126,6 +210,7 @@ public class Server extends Thread{
         }
 }
 
+/*
     class IOpair {
         	ClientCommunicator in = null;
         	ClientCommunicator out = null;
@@ -134,8 +219,9 @@ public class Server extends Thread{
         	public boolean isFull() {
         		if (in != null && out != null)
         			return true;
-        		else
+        		else {
         			return false;
+        		}
         	}
         	
         	public void setMobPacket(MobPacket m) {
@@ -165,4 +251,5 @@ public class Server extends Thread{
         		return mob.toString();
         	}
         }
+        */
 

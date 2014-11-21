@@ -1,8 +1,10 @@
 package server;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import objects.MobPacket;
 
 public class ClientCommunicator{
@@ -14,6 +16,7 @@ public class ClientCommunicator{
 	private int comType;
 	public boolean initialized = false;
 	protected MobPacket mobP;
+	ArrayList<MobPacket> mobs;
 	
 	
 public ClientCommunicator(Socket newSocket){
@@ -56,7 +59,7 @@ public ClientCommunicator(Socket newSocket){
 				
 			if (message instanceof String) {
 				System.out.println("Recieved message");
-				System.out.println((String) message);
+				System.out.println((int) message);
 			}
 			else {
 				System.out.println("Not valid data");
@@ -65,7 +68,7 @@ public ClientCommunicator(Socket newSocket){
 			
 			if (mob instanceof MobPacket) {
 				mobP = (MobPacket) mob;
-				initialized = true;
+				System.out.println("Got data from " + mobP.toString());
 			}
 			else	
 				System.out.println("This is not a mob packet");
@@ -74,7 +77,7 @@ public ClientCommunicator(Socket newSocket){
 			
 			try {
 				output = new ObjectOutputStream(socket.getOutputStream());
-				output.writeObject("You are Connected");
+				output.writeObject("Booya");
 				output.flush();
 			} catch (IOException e1) {
 				purge();
@@ -82,13 +85,15 @@ public ClientCommunicator(Socket newSocket){
 				return;
 			}
 			
-			if ((String) message == "Input")
+			if ((String) message == "INPUT")
 				comType = 0;
-			else if((String) message == "Output") {
+			else if((String) message == "OUTPUT") {
 				comType = 1;
-				return;
 			}
 			
+			
+			System.out.println(comType);
+			initialized = true;
 			while (true) {
 				
 					
@@ -101,8 +106,10 @@ public ClientCommunicator(Socket newSocket){
 				
 				
 				try {
-					
-					runInput();
+					if (comType == 0)
+						runInput();
+					else if (comType == 1)
+						runOutput();
 					
 				
 				} catch (ClassNotFoundException | IOException e) {
@@ -112,6 +119,15 @@ public ClientCommunicator(Socket newSocket){
 						//e.printStackTrace();
 				}
 				
+			}
+		}
+	}
+	
+	private void runOutput() throws IOException {
+		if (mobs != null) {
+			for (MobPacket m : mobs) {
+					output.writeObject(m);
+			
 			}
 		}
 	}
@@ -128,9 +144,15 @@ public ClientCommunicator(Socket newSocket){
 		}
 	}
 	
+	public void setMobs(ArrayList<MobPacket> m) {
+		mobs = m;
+	}
+	
 	public void sendMob(MobPacket p) {
 		try {
 			output.writeObject(p);
+			output.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Failed to send ti client");
