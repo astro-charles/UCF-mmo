@@ -333,7 +333,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 
 	@Override
 	public void keyTyped(java.awt.event.KeyEvent arg0) {
-		System.out.println("Pressed " + arg0.getKeyChar());
+		//System.out.println("Pressed " + arg0.getKeyChar());
 		
 	}
 	

@@ -48,7 +48,8 @@ public class Client implements Runnable{
 		ArrayList<Mobs> M = MathUtil.genMobs(E, mapX, mapY);
 		
 		DrawMoving mov = new DrawMoving(M,E);
-		
+                ServerComm sc = new ServerComm();
+                new Thread(sc).start();
 		GUI = new GameGui(mov, mapX, mapY);
 		//GUI.refreshMapObjects(MathUtil.genMap(GUI.getBoundsXY()[0], GUI.getBoundsXY()[1]));
 		Timer t = new Timer(20, GUI);

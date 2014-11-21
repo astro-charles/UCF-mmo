@@ -67,7 +67,7 @@ public class DrawMoving implements Runnable{
 		
 		for (MapElements m : map) {
 			if (m.getHitBox().intersects(R)) {
-				System.out.println("Collision");
+				//System.out.println("Collision");
 				return true;
 			}
 		
