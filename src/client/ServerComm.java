@@ -14,23 +14,33 @@ public class ServerComm implements Runnable{
     private ObjectOutputStream out;
     private MobPacket character;
     ArrayList<Mobs> mobs = new ArrayList<>();
-    ServerComm(ArrayList<Mobs> mobs){
+    public static boolean mobChange = false;
+    
+    ServerComm(ArrayList<Mobs> mobs, int x, int y){
         this.mobs = mobs;
         try{
         	
-            clientIN = new Socket("107.161.21.122", 1010);
-            clientOUT = new Socket("107.161.21.122", 1010);
-            //client = new Socket("192.168.1.143", 1010);
+            clientIN = new Socket("107.161.21.122", 1011);
+            clientOUT = new Socket("107.161.21.122", 1011);
+            //clientIN = new Socket("localhost", 1011);
+            //clientOUT = new Socket("localhost", 1011);
             //client.setSoTimeout(5000);
             character = new MobPacket(Long.toString(System.currentTimeMillis()),
-                                      640, 360, false);
+                                      x, y, false);
+            
             out = new ObjectOutputStream(clientIN.getOutputStream());
-            out.writeObject("INPUT");
-            out.writeObject(character);
-            out = new ObjectOutputStream(clientOUT.getOutputStream());
             out.writeObject("OUTPUT");
             out.writeObject(character);
+            out.flush();
+            //clientIN.shutdownOutput();
+        
+            out = new ObjectOutputStream(clientOUT.getOutputStream());
+            out.writeObject("INPUT");
+            out.writeObject(character);
+            out.flush();
+           // clientOUT.shutdownInput();
             
+            System.out.println("Making input stream...");
             in = new ObjectInputStream(clientIN.getInputStream());
             
             
@@ -39,6 +49,10 @@ public class ServerComm implements Runnable{
     
     public void run(){
         System.out.println("test:");
+        
+        int lastx = 0;
+        int lasty = 0;
+        
         while (true){
         	try{
                     Thread.sleep(20);
@@ -50,15 +64,24 @@ public class ServerComm implements Runnable{
         	Object temp;
                 
                 try {
+                	System.out.println("Attempting to read...");
                     temp = in.readObject();
+                    System.out.println("Object read");
                     
-                    System.out.println(temp);
-                    if(temp != null && temp instanceof MobPacket){
+                    //System.out.println(temp);
+                    if(temp instanceof MobPacket){
                         MobPacket tmp = (MobPacket)temp;
                         System.out.println("PACKET Name: " + " " + tmp.name + " posx: " + tmp.posx + " posy:" + tmp.posy);
                         boolean found = false;
                         for(Mobs m : mobs){
                             if(m.getName().compareTo(tmp.name) == 0){
+                            	
+                            	if (m.getBounds().x == tmp.posx && m.getBounds().y == tmp.posy)
+                            		mobChange = false;
+                            	else
+                            		mobChange = true;
+                            	
+                            	System.out.println("Found = true");
                                 found = true;
                                 if(tmp.kill == true)
                                     mobs.remove(m);
@@ -70,21 +93,16 @@ public class ServerComm implements Runnable{
                             if(tmp.name.contains("skel"))
                                 mobs.add(new Mobs(Textures.skell[2][0][0], tmp.posx, tmp.posy, tmp.name));
                             else
-                                mobs.add(new Mobs(Textures.vlad[0][0][0], tmp.posx, tmp.posy, tmp.name));
+                                mobs.add(new Mobs(Textures.vlad[0][tmp.direction][0], tmp.posx, tmp.posy, tmp.name));
                         }
                     }
                 } 
                 catch (ClassNotFoundException | IOException e) {
+                	System.out.println("Failed to read...");
                     System.out.println(e);
+                    break;
                 }
 
-        	try {
-                out.writeObject(new String("Sending stuff"));
-                } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                }
-        	
         }
     }
 

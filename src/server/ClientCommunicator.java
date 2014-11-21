@@ -16,7 +16,7 @@ public class ClientCommunicator{
 	private int comType;
 	public boolean initialized = false;
 	protected MobPacket mobP;
-	ArrayList<MobPacket> mobs;
+	public static ArrayList<MobPacket> mobs;
 	
 	
 public ClientCommunicator(Socket newSocket){
@@ -59,7 +59,7 @@ public ClientCommunicator(Socket newSocket){
 				
 			if (message instanceof String) {
 				System.out.println("Recieved message");
-				System.out.println((int) message);
+				System.out.println((String) message);
 			}
 			else {
 				System.out.println("Not valid data");
@@ -75,20 +75,28 @@ public ClientCommunicator(Socket newSocket){
 			
 			
 			
-			try {
-				output = new ObjectOutputStream(socket.getOutputStream());
-				output.writeObject("Booya");
-				output.flush();
-			} catch (IOException e1) {
-				purge();
-				e1.printStackTrace();
-				return;
-			}
 			
-			if ((String) message == "INPUT")
+			
+			String mes = (String) message;
+			if (mes.equals("INPUT") ){
 				comType = 0;
-			else if((String) message == "OUTPUT") {
+				mobs.add(mobP);
+				System.out.println("Seting as input");
+				
+			}
+			else if(mes.equals("OUTPUT")) {
 				comType = 1;
+				System.out.println("Seting as output");
+			
+				try {
+					output = new ObjectOutputStream(socket.getOutputStream());
+					output.writeObject("Booya");
+					output.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 			
 			
@@ -98,7 +106,7 @@ public ClientCommunicator(Socket newSocket){
 				
 					
 				try {
-					Thread.sleep(10);
+					Thread.sleep(50);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 					break;
@@ -108,12 +116,14 @@ public ClientCommunicator(Socket newSocket){
 				try {
 					if (comType == 0)
 						runInput();
+					
 					else if (comType == 1)
 						runOutput();
 					
 				
 				} catch (ClassNotFoundException | IOException e) {
 						purge();
+						removeSelf(mobP);
 						System.out.println("Client Disconected...");
 						break;
 						//e.printStackTrace();
@@ -123,10 +133,13 @@ public ClientCommunicator(Socket newSocket){
 		}
 	}
 	
-	private void runOutput() throws IOException {
+	private synchronized void runOutput() throws IOException {
+		
 		if (mobs != null) {
 			for (MobPacket m : mobs) {
-					output.writeObject(m);
+				if (!m.toString().equals(mobP.toString()))
+					output.writeObject(m.clone());
+					output.flush();
 			
 			}
 		}
@@ -135,13 +148,29 @@ public ClientCommunicator(Socket newSocket){
 	
 	private void runInput() throws ClassNotFoundException, IOException {
 		
+		//System.out.println("Runnung input");
 		Object stuff = input.readObject();
-			
+		//System.out.println("Read?");
 			
 		if (stuff instanceof int[]) {
 			int[] tmp = (int[]) stuff;
-			System.out.println("Recieved " + mobP.toString() + " Position: (" + tmp[0] + "," + tmp[1] + ")");		
+			System.out.println("Recieved " + mobP.toString() + " Position: (" + tmp[0] + "," + tmp[1] + ") and direction: " + tmp[2]);	
+			mobP.setPosition(tmp[0], tmp[1]);
+			mobP.setDirection(tmp[2]);
 		}
+		
+		//System.out.println("Stuff?");
+	}
+	
+	public void removeSelf(MobPacket m) {
+		MobPacket tmp = null;
+		for (MobPacket n : mobs) {
+			if (m.toString().equals(n.toString()))
+				tmp = n;
+		}
+		
+		if (tmp != null)
+			mobs.remove(tmp);
 	}
 	
 	public void setMobs(ArrayList<MobPacket> m) {

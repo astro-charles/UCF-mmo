@@ -38,14 +38,14 @@ public class Client implements Runnable{
 		Textures.doAll();
 		
 		ArrayList<MapElements> E = MathUtil.genMap(mapX, mapY);
-		ArrayList<Mobs> M = new ArrayList<>();
+		ArrayList<Mobs> M = new ArrayList<Mobs>();
                 //ArrayList<Mobs> M = MathUtil.genMobs(E, mapX, mapY);
                 
-                DrawMoving mov = new DrawMoving(M,E);
+        DrawMoving mov = new DrawMoving(M,E);
 		
-		GUI = new GameGui(mov, mapX, mapY);
+        GUI = new GameGui(mov, mapX, mapY);
                 
-                serv = new ServerComm(M);
+        serv = new ServerComm(M, GUI.getPosition()[0], GUI.getPosition()[1]);
 		
 		if (!serv.connected) {
                     System.out.println("Failed to connect.");
@@ -72,7 +72,7 @@ public class Client implements Runnable{
 
             while (true) {
                 try {
-                    Thread.sleep(250);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -80,9 +80,12 @@ public class Client implements Runnable{
                 //if (GUI.getChange())
                 try {
                     
-                    out.writeObject(GUI.getPosition());
+                    out.writeObject(GUI.getReleventData());
+                    out.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.out.println("\nLost Connection to the server...");
+                    break;
                 }
             }
 

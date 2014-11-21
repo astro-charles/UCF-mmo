@@ -63,8 +63,8 @@ public class Mobs extends GameObject{
         }
         
         public void setLocation(int x, int y){
-            this.bounds.setLocation(x, y);
-            return;
+	        bounds.x = x;
+	        bounds.y = y;
         }
         
         @Override

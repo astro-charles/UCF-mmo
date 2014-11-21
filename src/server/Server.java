@@ -16,13 +16,18 @@ public class Server extends Thread{
     //private ArrayList<IOpair> clientPair = new ArrayList<IOpair>();
     
 	public Server(){
+		clients = new ArrayList<ClientCommunicator>();
+		ClientCommunicator.mobs = new ArrayList<MobPacket>();
+		
 		System.out.println("Makeing server");
 		
 		try{
-			server = new ServerSocket(1010);
+			server = new ServerSocket(1011);
 		}
 		catch(IOException e){
-                    System.out.println("Problem starting server");
+			e.printStackTrace();
+            System.out.println("Problem starting server");
+            return;
         }
 	}
         
@@ -34,31 +39,34 @@ public class Server extends Thread{
         @Override
 	public void run(){
         	
-        Thread connector = new Thread() {
+        while (true) {
         	
-        	public void run() {
-        		
-        		while (true) {
-        			try{
-        				socket = server.accept();
-        			}
-        			catch(Exception e){
-                         System.out.println("Problem making client socket");
-        			}
-        			
-        			System.out.println("Client size" + clients.size());
-        			
-        			if (socket != null)
-        				createConn();
-        		}
-        	}
-        };
+        		try {
+					Thread.sleep(20);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    			
+        		try{
+    				socket = server.accept();
+    			}
+    			catch(Exception e){
+    				e.printStackTrace();
+                    System.out.println("Problem making client socket");
+                    break;
+    			}
+    			
+    			System.out.println("Client size" + clients.size());
+    			
+    			if (socket != null)
+    				createConn();
+    		}
+    	}
         
-        connector.start();
+        //MobPacket no = new MobPacket("TESTING", 0, 0, false);
         
-        MobPacket no = new MobPacket("TESTING", 0, 0, false);
-        
-		while(true){
+		//while(true){
 			
 			/*
 			// Remove all disconnected clients
@@ -72,12 +80,11 @@ public class Server extends Thread{
 			*/
 		
 			//checkUnpaired();
-			createConn();
-			sendMobs();
+			//createConn();
+			//sendMobs();
 			
 	
-		}
-	} 
+		//}
         
     private synchronized void createConn() {
     			clients.add(new ClientCommunicator(socket));

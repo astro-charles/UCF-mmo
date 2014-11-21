@@ -226,7 +226,8 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		
+		if (ServerComm.mobChange)
+			repaint();
 		cposX = 0;			
 		cposY =  0;		
 		cshiftX = 0;				
@@ -514,6 +515,14 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		tmp[1] = shiftY + posY;
 		return tmp;
  	}
+	
+	public int[] getReleventData() {
+		int[] tmp = new int[3];
+		tmp[0] = shiftX + posX;
+		tmp[1] = shiftY + posY;
+		tmp[2] = characterDirection;
+		return tmp;
+	}
 	////////////////////////////////////
 	
 	/////Controls the map shifting//////
