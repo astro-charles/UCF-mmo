@@ -3,7 +3,9 @@ package client;
 import java.io.*;
 import java.net.*;
 public class ServerComm implements Runnable{
-	Socket client;
+	Socket clientIN;
+	Socket clientOUT;
+	
     ObjectInputStream in;
     ObjectOutputStream out;
     
@@ -12,13 +14,20 @@ public class ServerComm implements Runnable{
         
         try{
         	
-            client = new Socket("107.161.21.122", 1010);
+            clientIN = new Socket("107.161.21.122", 1010);
+            clientOUT = new Socket("107.161.21.122", 1010);
             //client = new Socket("192.168.1.143", 1010);
             //client.setSoTimeout(5000);
             
-            //in = new ObjectInputStream(client.getInputStream());
-            out = new ObjectOutputStream(client.getOutputStream());
-            System.out.println("Test");
+            out = new ObjectOutputStream(clientIN.getOutputStream());
+            out.writeObject("Input");
+            
+            out = new ObjectOutputStream(clientOUT.getOutputStream());
+            out.writeObject("Output");
+            
+            in = new ObjectInputStream(clientIN.getInputStream());
+            
+            
         }catch(Exception e){System.out.println(e);}
     }
     
@@ -42,6 +51,8 @@ public class ServerComm implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        	
+       
         	
         	try {
 				out.writeObject(new String("Sending stuff"));

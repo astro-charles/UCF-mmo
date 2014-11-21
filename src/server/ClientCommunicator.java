@@ -1,13 +1,16 @@
 package server;
 import java.net.Socket;
+import java.net.SocketException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ClientCommunicator{
 	private Socket socket;
 	private boolean connected;
 	private ClientCommunicator.Handler handler;
-	//
+	private ObjectOutputStream mail;
+	
 	private class Handler extends Thread{
 		private ObjectInputStream in;
 		Handler(){
@@ -19,9 +22,11 @@ public class ClientCommunicator{
 		
 		public void run(){
 			
+			int count = 0;
 			while (true) {
 				
-				if (socket.isClosed() == true) {
+	
+				if (socket.isClosed() || !socket.isConnected()) {
 					System.out.println("Socket closed");
 					break;
 				}
@@ -34,10 +39,10 @@ public class ClientCommunicator{
 				}
 				
 				try{
-					if(in.available() != 0){
+					//if(in.available() != 0){
 						String stuff = in.readObject().toString();
 						System.out.println(stuff);
-					}
+					//}
 				}
 				catch(Exception e){
 					System.out.println("Problem reading objectstream");
@@ -57,8 +62,24 @@ public class ClientCommunicator{
 		socket = newSocket;
 		connected = socket.isConnected();
 		
+		try {
+			mail = new ObjectOutputStream(socket.getOutputStream());
+			mail.writeObject("You are Connected");
+			mail.flush();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		handler = new Handler();
 		handler.start();
+		
+		try {
+			socket.setKeepAlive(false);;
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public boolean isConnected(){
 		return connected;

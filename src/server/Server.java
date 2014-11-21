@@ -7,24 +7,27 @@ import java.util.*;
 public class Server extends Thread{
     private ServerSocket server;
 	private Socket socket;
+	
+	
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
         
 
      
 	public Server(){
 		System.out.println("Makeing server");
+		
 		try{
 			server = new ServerSocket(1010);
 		}
 		catch(IOException e){
                     System.out.println("Problem starting server");
-                }
+        }
 	}
         
-        public static void main(String[] args){
-            Server serv = new Server();
-            serv.run();
-        }
+    public static void main(String[] args){
+        Server serv = new Server();
+        serv.run();
+    }
         
         @Override
 	public void run(){
@@ -37,6 +40,7 @@ public class Server extends Thread{
 					clients.remove(i);
 				}
 			}
+			
 			try{
 				socket = server.accept();
 			}
@@ -45,6 +49,31 @@ public class Server extends Thread{
                         }
 			
 			if (socket != null) {
+				ObjectInputStream tmp;
+				try {
+					System.out.println("Establishing connection...");
+					tmp = new ObjectInputStream(socket.getInputStream());
+					
+					//if (tmp.available() != 0) {
+						System.out.println("Recieved Initial Message");
+						Object message = tmp.readObject();
+						
+						if (message instanceof String) {
+							System.out.println("Is String");
+							System.out.println((String) message);
+						}
+						else
+							System.out.println("Is not String");
+						
+						
+					//}
+						
+				} catch (IOException | ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 				System.out.println("Creating Client Comm");
 				clients.add(new ClientCommunicator(socket));
 			}
