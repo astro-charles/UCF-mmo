@@ -27,7 +27,8 @@ public class Client implements Runnable{
 	private GameGui GUI;
 	private ServerComm serv;
 	public Client() {
-                
+                //server.DBConnector db = new server.DBConnector();
+                //server.DBConnector.createConnection(null, null, null, null)
 		int mapX = 100*40;
 		int mapY = mapX;
 		
@@ -47,7 +48,7 @@ public class Client implements Runnable{
                     System.out.println("Failed to connect.");
                     return;
 		}
-			//
+			
 		Thread s = new Thread(serv);
                 s.start();
 		  
