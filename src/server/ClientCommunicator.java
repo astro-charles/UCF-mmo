@@ -15,7 +15,7 @@ public class ClientCommunicator{
                     try{
                         in = new ObjectInputStream(socket.getInputStream());
                     }
-                    catch(Exception e){System.out.println(e);};
+                    catch(Exception e){System.out.println("Problem making ObjectStream");};
                 }
 		
                 public void run(){
@@ -26,8 +26,7 @@ public class ClientCommunicator{
                                 }
 			}
 			catch(Exception e){
-				System.out.println(e);
-				return;
+				System.out.println("Problem reading objectstream");
 			}
 		}
 	}

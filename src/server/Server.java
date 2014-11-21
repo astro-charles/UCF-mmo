@@ -15,7 +15,9 @@ public class Server extends Thread{
 		try{
 			server = new ServerSocket(1010);
 		}
-		catch(IOException e){System.out.println(e);}
+		catch(IOException e){
+                    System.out.println("Problem starting server");
+                }
 	}
         
         public static void main(String[] args){
@@ -37,8 +39,9 @@ public class Server extends Thread{
 			try{
 				socket = server.accept();
 			}
-			catch(Exception e){System.out.println(e);}
-
+			catch(Exception e){
+                            System.out.println("Problem making client socket");
+                        }
 			clients.add(new ClientCommunicator(socket));
 		}
 	}
