@@ -22,11 +22,11 @@ public class ServerComm implements Runnable{
         	
             clientIN = new Socket("107.161.21.122", 1011);
             clientOUT = new Socket("107.161.21.122", 1011);
-            //clientIN = new Socket("localhost", 1011);
-            //clientOUT = new Socket("localhost", 1011);
+           // clientIN = new Socket("localhost", 1011);
+           // clientOUT = new Socket("localhost", 1011);
             //client.setSoTimeout(5000);
             character = new MobPacket(Long.toString(System.currentTimeMillis()),
-                                      x, y, false);
+                                      x, y, false, 0);
             
             out = new ObjectOutputStream(clientIN.getOutputStream());
             out.writeObject("OUTPUT");
@@ -64,14 +64,14 @@ public class ServerComm implements Runnable{
         	Object temp;
                 
                 try {
-                	System.out.println("Attempting to read...");
+                	//System.out.println("Attempting to read...");
                     temp = in.readObject();
-                    System.out.println("Object read");
+                    //System.out.println("Object read");
                     
                     //System.out.println(temp);
                     if(temp instanceof MobPacket){
                         MobPacket tmp = (MobPacket)temp;
-                        System.out.println("PACKET Name: " + " " + tmp.name + " posx: " + tmp.posx + " posy:" + tmp.posy);
+                        System.out.println("PACKET Name: " + " " + tmp.name + " posx: " + tmp.posx + " posy:" + tmp.posy + " direction: " + tmp.direction);
                         boolean found = false;
                         for(Mobs m : mobs){
                             if(m.getName().compareTo(tmp.name) == 0){
@@ -81,19 +81,27 @@ public class ServerComm implements Runnable{
                             	else
                             		mobChange = true;
                             	
+                            	System.out.println("direction = " + tmp.direction);
+                            	if (m.getDirection() != tmp.direction) {
+                            		System.out.println("Changeing direction");
+                            		m.setTexture(Textures.vlad[0][tmp.direction][3]);
+                            	}
+                            	
                             	System.out.println("Found = true");
                                 found = true;
                                 if(tmp.kill == true)
                                     mobs.remove(m);
-                                else 
+                                else  {
                                     m.setLocation(tmp.posx, tmp.posy);
+                                    m.setDirection(tmp.direction);
+                                }
                             }
                         }
                         if(!found){
                             if(tmp.name.contains("skel"))
                                 mobs.add(new Mobs(Textures.skell[2][0][0], tmp.posx, tmp.posy, tmp.name));
                             else
-                                mobs.add(new Mobs(Textures.vlad[0][tmp.direction][0], tmp.posx, tmp.posy, tmp.name));
+                                mobs.add(new Mobs(Textures.vlad[0][tmp.direction][3], tmp.posx, tmp.posy, tmp.name));
                         }
                     }
                 } 

@@ -157,6 +157,7 @@ public ClientCommunicator(Socket newSocket){
 			System.out.println("Recieved " + mobP.toString() + " Position: (" + tmp[0] + "," + tmp[1] + ") and direction: " + tmp[2]);	
 			mobP.setPosition(tmp[0], tmp[1]);
 			mobP.setDirection(tmp[2]);
+			
 		}
 		
 		//System.out.println("Stuff?");

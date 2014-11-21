@@ -51,6 +51,9 @@ public class Mobs extends GameObject{
 		return moving;
 	}
 	
+	public int getDirection() {
+		return direction;
+	}
 	public void setDirection(int d) {
 		if (d > 7 || d < 0)
 			return;

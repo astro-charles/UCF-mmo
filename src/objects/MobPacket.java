@@ -13,16 +13,16 @@ public class MobPacket implements Serializable{
     public boolean kill;
     public int direction;
     
-    public MobPacket(String name, int x, int y, boolean kill){
+    public MobPacket(String name, int x, int y, boolean kill, int d){
         this.name = name;
         this.posx = x;
         this.posy = y;
         this.kill = kill;
-        direction = 0;
+        direction = d;
     }
     
     public MobPacket clone() {
-    	return new MobPacket(name,posx,posy,kill);
+    	return new MobPacket(name,posx,posy,kill, direction);
     }
     public void setPosition(int x, int y) {
     	posx = x;
