@@ -50,7 +50,6 @@ public class ServerComm implements Runnable{
         	Object temp;
                 
                 try {
-                    
                     temp = in.readObject();
                     
                     System.out.println(temp);
