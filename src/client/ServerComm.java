@@ -25,10 +25,10 @@ public class ServerComm implements Runnable{
             character = new MobPacket(Long.toString(System.currentTimeMillis()),
                                       640, 360, false);
             out = new ObjectOutputStream(clientIN.getOutputStream());
-            out.writeObject("Input");
+            out.writeObject("INPUT");
             out.writeObject(character);
             out = new ObjectOutputStream(clientOUT.getOutputStream());
-            out.writeObject("Output");
+            out.writeObject("OUTPUT");
             out.writeObject(character);
             
             in = new ObjectInputStream(clientIN.getInputStream());
