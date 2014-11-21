@@ -7,14 +7,23 @@ import java.io.ObjectInputStream;
 public class ClientCommunicator{
 	private Socket socket;
 	private boolean connected;
-	private Handler handler;
-
+	private ClientCommunicator.Handler handler;
+//
 	private class Handler extends Thread{
 		private ObjectInputStream in;
+                Handler(){
+                    try{
+                        in = new ObjectInputStream(socket.getInputStream());
+                    }
+                    catch(Exception e){System.out.println(e);};
+                }
 		
                 public void run(){
 			try{
-				in = new ObjectInputStream(socket.getInputStream());
+                                if(in.available() != 0){
+                                    String stuff = in.readObject().toString();
+                                    System.out.println(stuff);
+                                }
 			}
 			catch(Exception e){
 				System.out.println(e);
@@ -28,7 +37,7 @@ public class ClientCommunicator{
 		socket = newSocket;
 		connected = true;
 
-		handler = new Handler();
+		handler = new ClientCommunicator.Handler();
 		handler.start();
 	}
 

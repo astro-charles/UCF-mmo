@@ -10,7 +10,7 @@ public class Server extends Thread{
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
         
 
-        
+        //
 	public Server(){
 		try{
 			server = new ServerSocket(1010);
