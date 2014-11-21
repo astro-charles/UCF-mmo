@@ -18,7 +18,7 @@ public class ServerComm implements Runnable{
     public void run(){
         String test = new String("test");
         try{
-        out.writeObject(test);
+            out.writeObject(test);
         }
         catch(Exception e){System.out.println(e);}
     }

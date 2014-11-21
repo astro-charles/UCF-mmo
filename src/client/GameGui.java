@@ -324,6 +324,8 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		case 'd':
 			keyHolds[3] = false;
 			break;
+                case ' ':
+                        break;
 		default:
 			System.out.println("Invalid key press.");
 			break;
