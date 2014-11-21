@@ -18,7 +18,7 @@ public class Server extends Thread{
 		catch(IOException e){System.out.println(e);}
 	}
         
-        public static void main(){
+        public static void main(String[] args){
             Server serv = new Server();
             serv.run();
         }
