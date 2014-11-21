@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 package objects;
-
+import java.io.*;
 /**
  *
  * @author Elucid
  */
-public class MobPacket {
+public class MobPacket implements Serializable{
     public String name;
     public int posx;
     public int posy;
