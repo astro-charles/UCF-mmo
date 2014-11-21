@@ -10,14 +10,15 @@ public class Server extends Thread{
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
         
 
-        
+     
 	public Server(){
-		
+		System.out.println("Makeing server");
 		try{
-			System.out.println("Creating new Server");
 			server = new ServerSocket(1010);
 		}
-		catch(IOException e){System.out.println(e);}
+		catch(IOException e){
+                    System.out.println("Problem starting server");
+                }
 	}
         
         public static void main(String[] args){
@@ -27,36 +28,28 @@ public class Server extends Thread{
         
         @Override
 	public void run(){
-        System.out.println("Server starting");
-        
-        String dots = "";
 		while(true){
-			
-			
 			// Remove all disconnected clients
 			for(int i = 0;i < clients.size();i++){
 				// Check connection, remove on dead
 				if(!clients.get(i).isConnected()){
-					System.out.println("Disconnecting client");
 					System.out.println(clients.get(i));
 					clients.remove(i);
 				}
 			}
 			try{
-				System.out.print("Testing server connection." + dots + "\r");
 				socket = server.accept();
 			}
-			catch(Exception e){System.out.println(e);}
-
+			catch(Exception e){
+                            System.out.println("Problem making client socket");
+                        }
+			
 			if (socket != null) {
-				System.out.println("Adding client");
+				System.out.println("Creating Client Comm");
 				clients.add(new ClientCommunicator(socket));
 			}
-			
-			dots += ".";
-			
-			if (dots.length() > 10)
-				dots = "";
 		}
 	}
 }
+
+
