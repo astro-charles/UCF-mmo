@@ -34,6 +34,7 @@ public class ClientCommunicator{
 
 	public ClientCommunicator(Socket newSocket){
 
+		System.out.println("Creating new Client Comm");
 		socket = newSocket;
 		connected = true;
 

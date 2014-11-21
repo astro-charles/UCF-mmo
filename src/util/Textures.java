@@ -184,7 +184,7 @@ public class Textures {
  	
  	//Helper functions to view imported images and manipulate them
 	public static void imageViewer(String s) throws IOException {
-		BufferedImage img = ImageIO.read(new File(s));
+		final BufferedImage img = ImageIO.read(new File(s));
 		
 		
 		JFrame j = new JFrame();
@@ -216,7 +216,7 @@ public class Textures {
 		j.setVisible(true);
 	}
 	
-	public static void imageViewer(BufferedImage img){		
+	public static void imageViewer(final BufferedImage img){		
 		
 		JFrame j = new JFrame();
 		j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -236,7 +236,7 @@ public class Textures {
 		j.setVisible(true);
 	}
 	
-	public static void imageViewer(BufferedImage[][] img){		
+	public static void imageViewer(final BufferedImage[][] img){		
 		
 		
 		if (img == null) {
@@ -273,14 +273,14 @@ public class Textures {
 		j.setVisible(true);
 	}
 
-	public static void mapViewer(GameObject[] obj){		
+	public static void mapViewer(final GameObject[] obj){		
 		
-		JFrame j = new JFrame();
+		final JFrame j = new JFrame();
 		j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 
-		int width = 600;
-		int height = 600;
+		final int width = 600;
+		final int height = 600;
 		
 		Container c = j.getContentPane();
 		
