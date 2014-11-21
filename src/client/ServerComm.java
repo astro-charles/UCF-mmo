@@ -14,9 +14,9 @@ public class ServerComm implements Runnable{
         	
             client = new Socket("107.161.21.122", 1010);
             //client = new Socket("192.168.1.143", 1010);
-            client.setSoTimeout(5000);
+            //client.setSoTimeout(5000);
             
-            in = new ObjectInputStream(client.getInputStream());
+            //in = new ObjectInputStream(client.getInputStream());
             out = new ObjectOutputStream(client.getOutputStream());
             System.out.println("Test");
         }catch(Exception e){System.out.println(e);}
@@ -43,6 +43,12 @@ public class ServerComm implements Runnable{
 				e.printStackTrace();
 			}
         	
+        	try {
+				out.writeObject(new String("Sending stuff"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	
         }
     }
