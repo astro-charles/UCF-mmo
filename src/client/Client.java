@@ -39,6 +39,9 @@ public class Client implements Runnable{
 	
 	public static void main(String[] args) {
 		
+		ServerComm serv = new ServerComm();
+		Thread s = new Thread(serv);
+		
 		int mapX = 100*40;
 		int mapY = mapX;
 		
