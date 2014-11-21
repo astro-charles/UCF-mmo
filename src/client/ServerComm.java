@@ -6,8 +6,8 @@ public class ServerComm implements Runnable{
 	Socket clientIN;
 	Socket clientOUT;
 	
-    ObjectInputStream in;
-    ObjectOutputStream out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
     
     //ArrayList<Mobs> m = new ArrayList<Mob>();
     ServerComm(){

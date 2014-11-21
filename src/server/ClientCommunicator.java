@@ -9,20 +9,56 @@ public class ClientCommunicator{
 	private Socket socket;
 	private boolean connected;
 	private ClientCommunicator.Handler handler;
-	private ObjectOutputStream mail;
+	private ObjectOutputStream output;
+	private ObjectInputStream input;
+	private int comType;
 	
 	private class Handler extends Thread{
-		private ObjectInputStream in;
-		Handler(){
-			try{
-				in = new ObjectInputStream(socket.getInputStream());
-			}
-			catch(Exception e){System.out.println("Problem making ObjectStream");};
-		}
-		
+
 		public void run(){
+			connected = false;
 			
-			int count = 0;
+			System.out.println("Establishing connection...");
+			
+			Object message = null;
+			
+			try {
+				
+				input = new ObjectInputStream(socket.getInputStream());
+				message = input.readObject();
+				
+			} catch (ClassNotFoundException | IOException e2) {
+			
+				e2.printStackTrace();
+				return;
+			}
+				
+			if (message instanceof String) {
+				System.out.println("Recieved message");
+				System.out.println((String) message);
+			}
+			else {
+				System.out.println("Not valid data");
+				return;
+			}
+			
+			
+			
+			try {
+				output = new ObjectOutputStream(socket.getOutputStream());
+				output.writeObject("You are Connected");
+				output.flush();
+			} catch (IOException e1) {
+				
+				e1.printStackTrace();
+				return;
+			}
+			
+			if ((String) message == "Input")
+				comType = 0;
+			else if((String) message == "Output")
+				comType = 1;
+			
 			while (true) {
 				
 	
@@ -34,18 +70,19 @@ public class ClientCommunicator{
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					break;
 				}
 				
 				try{
 					//if(in.available() != 0){
-						String stuff = in.readObject().toString();
+						String stuff = input.readObject().toString();
 						System.out.println(stuff);
 					//}
 				}
 				catch(Exception e){
-					System.out.println("Problem reading objectstream");
+					System.out.println("Problem reading objectstream.\n Probably disconnected...");
+					break;	
 				}
 			}
 		}
@@ -59,31 +96,18 @@ public class ClientCommunicator{
 		if (newSocket.isConnected() != true)
 			System.out.println("Client is not connected");
 		
-		socket = newSocket;
-		connected = socket.isConnected();
 		
-		try {
-			mail = new ObjectOutputStream(socket.getOutputStream());
-			mail.writeObject("You are Connected");
-			mail.flush();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		socket = newSocket;
 		
 		handler = new Handler();
 		handler.start();
 		
-		try {
-			socket.setKeepAlive(false);;
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
+	
 	public boolean isConnected(){
 		return connected;
 	}
+	
 	public void purge(){
 	// Close everything
 		try{

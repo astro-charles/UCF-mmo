@@ -49,31 +49,6 @@ public class Server extends Thread{
                         }
 			
 			if (socket != null) {
-				ObjectInputStream tmp;
-				try {
-					System.out.println("Establishing connection...");
-					tmp = new ObjectInputStream(socket.getInputStream());
-					
-					//if (tmp.available() != 0) {
-						System.out.println("Recieved Initial Message");
-						Object message = tmp.readObject();
-						
-						if (message instanceof String) {
-							System.out.println("Is String");
-							System.out.println((String) message);
-						}
-						else
-							System.out.println("Is not String");
-						
-						
-					//}
-						
-				} catch (IOException | ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
 				System.out.println("Creating Client Comm");
 				clients.add(new ClientCommunicator(socket));
 			}

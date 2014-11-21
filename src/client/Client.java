@@ -29,7 +29,7 @@ public class Client implements Runnable{
 	//Updates client every second
 	public void run() {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(250);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -40,6 +40,7 @@ public class Client implements Runnable{
 	public static void main(String[] args) {
 		
 		ServerComm serv = new ServerComm();
+		
 		Thread s = new Thread(serv);
 		
 		int mapX = 100*40;
