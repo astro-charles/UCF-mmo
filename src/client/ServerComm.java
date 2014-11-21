@@ -12,7 +12,7 @@ public class ServerComm implements Runnable{
             client = new Socket("107.161.21.122", 1010);
             //in = new ObjectInputStream(client.getInputStream());
             out = new ObjectOutputStream(client.getOutputStream());
-        }catch(Exception e){System.out.println(e);}
+        }catch(Exception e){System.out.println("connected fine");}
     }
     
     public void run(){
