@@ -26,7 +26,10 @@ public class Client implements Runnable{
 	private ArrayList<GameObject> allMapObjects;
 	private GameGui GUI;
 	private ServerComm serv;
+        Audio soundplayer;
 	public Client() {
+            //soundplayer = new Audio();
+            //soundplayer.begin();
                 //server.DBConnector db = new server.DBConnector();
                 //server.DBConnector.createConnection(null, null, null, null)
 		int mapX = 100*40;
@@ -65,7 +68,7 @@ public class Client implements Runnable{
 	//Updates client every second
         public void run() {
             ObjectOutputStream out = serv.getOutput();
-            ObjectInputStream in = serv.getInput();
+            //ObjectInputStream in = serv.getInput();
 
             while (true) {
                 try {
