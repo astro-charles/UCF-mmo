@@ -494,12 +494,24 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		return height;
 	}
 	
+	public boolean getChange() {
+		return change;
+	}
+	
 	public int[] getBoundsXY() {
 		int[] tmp = new int[2];
 		tmp[0] = boundsX;
 		tmp[1] = boundsY;
 		return tmp;
 	}
+	
+	
+	public int[] getPosition() {
+		int[] tmp = new int[2];
+		tmp[0] = shiftX + posX;
+		tmp[1] = shiftY + posY;
+		return tmp;
+ 	}
 	////////////////////////////////////
 	
 	/////Controls the map shifting//////

@@ -3,6 +3,8 @@ package client;
 import java.io.*;
 import java.net.*;
 public class ServerComm implements Runnable{
+	
+	public boolean connected = true;
 	Socket clientIN;
 	Socket clientOUT;
 	
@@ -28,7 +30,7 @@ public class ServerComm implements Runnable{
             in = new ObjectInputStream(clientIN.getInputStream());
             
             
-        }catch(Exception e){System.out.println(e);}
+        }catch(Exception e){System.out.println(e); connected = false;}
     }
     
     public void run(){
@@ -62,5 +64,13 @@ public class ServerComm implements Runnable{
 			}
         	
         }
+    }
+
+    public ObjectInputStream getInput() {
+    	return in;
+    }
+    
+    public ObjectOutputStream getOutput() {
+    	return out;
     }
 }

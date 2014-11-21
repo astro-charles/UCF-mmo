@@ -1,6 +1,7 @@
 package server;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -75,12 +76,20 @@ public class ClientCommunicator{
 				}
 				
 				try{
-					//if(in.available() != 0){
-						String stuff = input.readObject().toString();
-						System.out.println(stuff);
-					//}
+					Object stuff = input.readObject();
+					
+					
+					if (stuff instanceof int[]) {
+						System.out.println("Got position");
+						int[] tmp = (int[]) stuff;
+						System.out.println("Recieved Position: (" + tmp[0] + "," + tmp[1] + ")");
+						
+							
+					}
+					
 				}
 				catch(Exception e){
+					e.printStackTrace();
 					System.out.println("Problem reading objectstream.\n Probably disconnected...");
 					break;	
 				}
