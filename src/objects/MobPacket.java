@@ -20,4 +20,8 @@ public class MobPacket implements Serializable{
         this.posy = y;
         this.kill = kill;
     }
+    
+    public String toString(){
+        return "Name: " + this.name;
+    }
 }
