@@ -7,6 +7,7 @@ import java.util.Random;
 public class Mobs extends GameObject{
 
 	public final int hitCons = 5;
+        private String name;
 	private int maxHealth;
 	private int health;
 	private int coins;
@@ -16,9 +17,10 @@ public class Mobs extends GameObject{
 	private int distance;
 	private boolean moving;
 	
-	public Mobs(BufferedImage I, int x, int y) {
+	public Mobs(BufferedImage I, int x, int y, String name) {
 		super(I, x, y);
-		
+		this.name = name;
+                
 		Random rand = new Random();
 		coins = rand.nextInt(10) + 1;
 		
@@ -55,5 +57,19 @@ public class Mobs extends GameObject{
 		
 		direction = d;
 	}
+        
+        public String getName(){
+            return this.name;
+        }
+        
+        public void setLocation(int x, int y){
+            this.bounds.setLocation(x, y);
+            return;
+        }
+        
+        @Override
+        public String toString(){
+            return this.name + " Position:" + this.bounds.x + " ," + this.bounds.y;
+        }
 
 }

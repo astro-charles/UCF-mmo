@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 
 
 public class GameObject {
-	private int ID;
-	private Rectangle bounds;
-	private Rectangle hitBox;
-	private BufferedImage texture;
+	protected int ID;
+	protected Rectangle bounds;
+	protected Rectangle hitBox;
+	protected BufferedImage texture;
 	
 	public GameObject(BufferedImage I, int x, int y) {
 		bounds = new Rectangle(x,y,I.getWidth(),I.getHeight());

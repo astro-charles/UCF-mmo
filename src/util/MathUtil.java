@@ -71,7 +71,7 @@ public class MathUtil {
 		return C;
 	}
 
-	
+	/*
 	public static ArrayList<Mobs> genMobs(ArrayList<MapElements> e, int w, int h) {
 		ArrayList<Mobs> m = new ArrayList<Mobs>();
 		Random rand = new Random();
@@ -96,5 +96,5 @@ public class MathUtil {
 		return m;
 		
 		
-	}
+	}*/
 }

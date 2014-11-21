@@ -302,6 +302,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 			case ' ':
 				attacking = true;
 				attackTimer = 0;
+                                break;
 			default:
 				System.out.println("Invalid key press.");
 				break;
@@ -324,6 +325,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		case 'd':
 			keyHolds[3] = false;
 			break;
+                case ' ':break;
 		default:
 			System.out.println("Invalid key press.");
 			break;
@@ -333,7 +335,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 
 	@Override
 	public void keyTyped(java.awt.event.KeyEvent arg0) {
-		System.out.println("Pressed " + arg0.getKeyChar());
+		//System.out.println("Pressed " + arg0.getKeyChar());
 		
 	}
 	
