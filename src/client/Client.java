@@ -47,10 +47,12 @@ public class Client implements Runnable{
                     System.out.println("Failed to connect.");
                     return;
 		}
-			
+			//
 		Thread s = new Thread(serv);
                 s.start();
-		
+		  
+                
+                
 		
 		Timer t = new Timer(20, GUI);
 		t.start();
