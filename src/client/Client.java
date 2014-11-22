@@ -26,7 +26,9 @@ public class Client implements Runnable{
 	private ArrayList<GameObject> allMapObjects;
 	private GameGui GUI;
 	private ServerComm serv;
-        Audio soundplayer;
+    private Audio soundplayer;
+    public static boolean sendMovement = false;
+        
 	public Client() {
             //soundplayer = new Audio();
             //soundplayer.begin();
@@ -80,8 +82,12 @@ public class Client implements Runnable{
                 //if (GUI.getChange())
                 try {
                     
-                    out.writeObject(GUI.getReleventData());
-                    out.flush();
+                	if (sendMovement) {
+                		out.writeObject(GUI.getReleventData());
+                		out.flush();
+                		sendMovement = false;
+                	}
+                	
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.out.println("\nLost Connection to the server...");

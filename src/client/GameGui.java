@@ -228,6 +228,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		
 		if (ServerComm.mobChange)
 			repaint();
+		
 		cposX = 0;			
 		cposY =  0;		
 		cshiftX = 0;				
@@ -237,6 +238,8 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 				
 		//If there is a change in the map
 		if (change || attacking) {
+			
+			Client.sendMovement = true;
 			
 			Rectangle r = new Rectangle(
 					posX + shiftX + cposX + cshiftX + (character.getWidth()-30)/2 -character.getWidth()/2,
@@ -374,6 +377,7 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 	private void slideMap() {
 		/*Handles the movement of the map based on key presses*/
 		//Up
+		
 		if (keyHolds[0]) {
 			
 			if (shiftY == 0 || shiftY == boundsY-height)	//If at edge of map, change character position

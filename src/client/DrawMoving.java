@@ -33,8 +33,8 @@ public class DrawMoving implements Runnable{
 	
 	public void drawMobs(Graphics2D g, int shiftX, int shiftY, int w, int h) {
 		for (Mobs M : mobs) {
-			int X = M.getBounds().x;
-			int Y = M.getBounds().y;
+			int X = M.getBounds().x - M.getBounds().width/2;
+			int Y = M.getBounds().y - M.getBounds().height/2;
 			
 			if (X >= shiftX-buff && X <= shiftX+w+buff && Y >= shiftY-buff && Y <= shiftY+h+buff) {
 				g.drawImage(M.getTexture(), X-shiftX, Y-shiftY, null);

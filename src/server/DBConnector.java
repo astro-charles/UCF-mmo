@@ -6,9 +6,7 @@ import java.util.*;
 public class DBConnector {
 	private static final boolean DEBUG = true;
     private static final String DEFAULT_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DEFAULT_URL = "jdbc:mysql://mmo.cg8eat1oqjuj.us-east-1.rds.amazonaws.com:3306/mmo";
-    private static final String DEFAULT_USERNAME = "mmo_admin";
-    private static final String DEFAULT_PASSWORD = "1234567aA";
+    
 //
 //    public static void main(String[] args) {
 //        long begTime = System.currentTimeMillis();

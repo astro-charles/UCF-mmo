@@ -103,16 +103,6 @@ public ClientCommunicator(Socket newSocket){
 			System.out.println(comType);
 			initialized = true;
 			while (true) {
-				
-					
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-					break;
-				}
-				
-				
 				try {
 					if (comType == 0)
 						runInput();
@@ -127,14 +117,23 @@ public ClientCommunicator(Socket newSocket){
 						System.out.println("Client Disconected...");
 						break;
 						//e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					
+					purge();
+					removeSelf(mobP);
+					System.out.println("Client Disconected...");
+					break;
 				}
 				
 			}
 		}
 	}
 	
-	private synchronized void runOutput() throws IOException {
+	private synchronized void runOutput() throws IOException, InterruptedException {
 		
+		Thread.sleep(50);
+	
 		if (mobs != null) {
 			for (MobPacket m : mobs) {
 				if (!m.toString().equals(mobP.toString()))

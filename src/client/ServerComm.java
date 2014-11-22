@@ -21,7 +21,7 @@ public class ServerComm implements Runnable{
         try{
         	
             clientIN = new Socket("107.161.21.122", 1011);
-            clientOUT = new Socket("107.161.21.122", 1011);
+            clientOUT = new Socket("107.161.21.122", 1011 );
            // clientIN = new Socket("localhost", 1011);
            // clientOUT = new Socket("localhost", 1011);
             //client.setSoTimeout(5000);
