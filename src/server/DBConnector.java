@@ -6,7 +6,9 @@ import java.util.*;
 public class DBConnector {
 	private static final boolean DEBUG = true;
     private static final String DEFAULT_DRIVER = "com.mysql.jdbc.Driver";
-    
+    private static final String DEFAULT_URL = null;
+    private static final String DEFAULT_USERNAME = null;
+    private static final String DEFAULT_PASSWORD = null;
 //
 //    public static void main(String[] args) {
 //        long begTime = System.currentTimeMillis();
