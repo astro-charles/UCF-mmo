@@ -2,30 +2,31 @@ package client;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+
 import objects.*;
 import util.*;
 public class ServerComm implements Runnable{
 	
 	public boolean connected = true;
-	Socket clientIN;
-	Socket clientOUT;
+	private Socket clientIN;
+	private Socket clientOUT;
 	
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private static ObjectInputStream in;
+    private static ObjectOutputStream out;
     private MobPacket character;
     ArrayList<Mobs> mobs = new ArrayList<>();
     public static boolean mobChange = false;
     
-    ServerComm(ArrayList<Mobs> mobs, int x, int y){
+    ServerComm(ArrayList<Mobs> mobs, int x, int y, String name){
         this.mobs = mobs;
         try{
         	
             clientIN = new Socket("107.161.21.122", 1011);
             clientOUT = new Socket("107.161.21.122", 1011 );
-           // clientIN = new Socket("localhost", 1011);
-           // clientOUT = new Socket("localhost", 1011);
-            //client.setSoTimeout(5000);
-            character = new MobPacket(Long.toString(System.currentTimeMillis()),
+            //clientIN = new Socket("localhost", 1011);
+            //clientOUT = new Socket("localhost", 1011);
+            
+            character = new MobPacket("Bob" +Long.toString(System.currentTimeMillis()/10000),
                                       x, y, false, 0);
             
             out = new ObjectOutputStream(clientIN.getOutputStream());
@@ -104,6 +105,11 @@ public class ServerComm implements Runnable{
                                 mobs.add(new Mobs(Textures.vlad[0][tmp.direction][3], tmp.posx, tmp.posy, tmp.name));
                         }
                     }
+                    
+                    else if (temp instanceof String) {
+                    	System.out.println("Client recieved string");
+                    	ChatPannel.addString((String) temp);
+                    }
                 } 
                 catch (ClassNotFoundException | IOException e) {
                 	System.out.println("Failed to read...");
@@ -113,6 +119,17 @@ public class ServerComm implements Runnable{
 
         }
     }
+    
+    public static void writeMessage(String s) {
+    	try {
+			out.writeObject(s);
+			out.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    	
 
     public ObjectInputStream getInput() {
     	return in;

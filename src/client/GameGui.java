@@ -25,7 +25,8 @@ import util.Textures;
 public class GameGui extends JPanel implements KeyListener, ActionListener{
 
 	//Window object
-	private final JFrame window = new JFrame("2DMMO");
+	private final static JFrame window = new JFrame("2DMMO");
+	private final static ChatPannel pannel = new ChatPannel();
 	
 	//Height and width of the window
 	private int width = 1280;
@@ -105,122 +106,16 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		window.addKeyListener(this);
 		
 		//Make the window
+		
+		this.setLayout(null);
+		this.add(pannel);
+		
 		window.setContentPane(this);
 		window.pack();
 		
 		window.setVisible(true);
 	}
 	
-	/*
-	private void setKeyBindings() {
-		this.getInputMap().put(KeyStroke.getKeyStroke('w'), "up");
-		this.getInputMap().put(KeyStroke.getKeyStroke('a'), "left");
-		this.getInputMap().put(KeyStroke.getKeyStroke('s'), "down");
-		this.getInputMap().put(KeyStroke.getKeyStroke('d'), "right");
-		
-		Action playerControls = new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Action:" +shiftX + " " + shiftY + " " + arg0.getActionCommand());
-				switch (arg0.getActionCommand()) {
-				case "w":
-					decShiftY();
-					break;
-				case "a":
-					decShiftX();
-					break;
-				case "s":
-					incShiftY();
-					break;
-				case "d":
-					incShiftX();
-					break;
-				default:
-					break;
-				}
-				
-				if (shiftX < 0)
-					shiftX = 0;
-				if (shiftY < 0)
-					shiftY = 0;
-				
-				changed();
-				
-			}
-		};
-		
-		
-		this.getActionMap().put("up", playerControls);
-		this.getActionMap().put("left", playerControls);
-		this.getActionMap().put("down", playerControls);
-		this.getActionMap().put("right", playerControls);
-		
-	}
-	
-	/*
-	@Override
-	//This is the thread that will refresh the game display at 60fps
-	public void run() {
-		
-		//Sets the window to visible when the program starts
-		window.setVisible(true);
-		
-		//Graphics object for the image we are going to draw to
-		Graphics2D g2 = (Graphics2D) screen.getGraphics();
-		
-		
-		//Thread loop for the gui
-		while (true) {
-			
-			/*Handles the movement of the map based on key presses
-			if (keyHolds[0]) {
-				decShiftY();
-				change = true;
-			}
-			else if (keyHolds[2]){
-				incShiftY();
-				change = true;
-			}
-			
-			if (keyHolds[1]) {
-				decShiftX();
-				change = true;
-			}
-			else if (keyHolds[3]) {
-				incShiftX();
-				change = true;
-			}
-				
-			checkBounds();
-			
-			//If there is change on the map, draw it
-			if (change) {
-				//Gets the current position and draws that subimage to screen
-				g2.drawImage(map.getSubimage(shiftX, shiftY, width, height), 0,0,width, height,null);
-				
-				//Draws in game objects
-				drawObjects(g2);
-				
-				//Resets change variable
-				change = !change;
-			}
-			
-			
-			
-			//repaint screen
-			this.repaint();
-			
-			//Sleep for every 10 milliseconds
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
-	*/
 	
 	//Refreshes the screen with new content
 	@Override
@@ -329,7 +224,11 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		case 'd':
 			keyHolds[3] = false;
 			break;
-                case ' ':break;
+        case ' ':
+        	break;
+        case 't':
+        	pannel.toggleVisible();
+            break;
 		default:
 			System.out.println("Invalid key press.");
 			break;
@@ -358,13 +257,6 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		
 		g2.setColor(Color.PINK);
 		g2.drawImage(character, posX-character.getWidth()/2, posY-character.getHeight()/2, null);
-		
-		
-		g2.drawRect(
-				posX + cposX -character.getWidth()/2 + (character.getWidth()-30)/2,
-				posY + cposY -character.getHeight()/2 + (character.getHeight()-70)/2 + 40,
-				30,
-				30);
 		
 		
 	}
@@ -527,6 +419,10 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 		tmp[2] = characterDirection;
 		return tmp;
 	}
+	
+	public static void resetKeyListener() {
+		window.requestFocus();;
+	}
 	////////////////////////////////////
 	
 	/////Controls the map shifting//////
@@ -564,8 +460,6 @@ public class GameGui extends JPanel implements KeyListener, ActionListener{
 	public void decPosY() {
 		cposY -= pixChange;
 	}
-
-	
 
 	////////////////////////////////////
 	

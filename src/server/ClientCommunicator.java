@@ -147,9 +147,7 @@ public ClientCommunicator(Socket newSocket){
 	
 	private void runInput() throws ClassNotFoundException, IOException {
 		
-		//System.out.println("Runnung input");
 		Object stuff = input.readObject();
-		//System.out.println("Read?");
 			
 		if (stuff instanceof int[]) {
 			int[] tmp = (int[]) stuff;
@@ -157,6 +155,11 @@ public ClientCommunicator(Socket newSocket){
 			mobP.setPosition(tmp[0], tmp[1]);
 			mobP.setDirection(tmp[2]);
 			
+		}
+		
+		else if (stuff instanceof String) {
+			System.out.println("Recieved String");
+			Server.forwardObject(mobP.name +": " + (String) stuff);
 		}
 		
 		//System.out.println("Stuff?");
@@ -192,6 +195,10 @@ public ClientCommunicator(Socket newSocket){
 		return connected;
 	}
 	
+	public boolean isClosed() {
+		return socket.isClosed();
+	}
+	
 	public MobPacket getMob() {
 		return mobP;
 	}
@@ -208,6 +215,17 @@ public ClientCommunicator(Socket newSocket){
 		catch(Exception e){
 				System.out.println(e);
 		}
+	}
+	
+	public void passObject(Object o) {
+		try {
+			output.writeObject(o);
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public String toString(){

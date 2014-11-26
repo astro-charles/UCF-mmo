@@ -38,10 +38,6 @@ public class DrawMoving implements Runnable{
 			
 			if (X >= shiftX-buff && X <= shiftX+w+buff && Y >= shiftY-buff && Y <= shiftY+h+buff) {
 				g.drawImage(M.getTexture(), X-shiftX, Y-shiftY, null);
-				//g2.setColor(Color.YELLOW);
-				//g2.drawRect(G.getBounds().x - shiftX, G.getBounds().y - shiftY, G.getBounds().width, G.getBounds().height);
-				//g.setColor(Color.CYAN);
-				//g.drawRect(M.getHitBox().x - shiftX, M.getHitBox().y - shiftY, M.getHitBox().width, M.getHitBox().height);
 			}
 		}
 	}
@@ -54,10 +50,6 @@ public class DrawMoving implements Runnable{
 				
 				if (X >= shiftX-buff && X <= shiftX+w+buff && Y >= shiftY-buff && Y <= shiftY+h+buff) {
 					g2.drawImage(G.getTexture(), X-shiftX, Y-shiftY, null);
-					//g2.setColor(Color.YELLOW);
-					//g2.drawRect(G.getBounds().x - shiftX, G.getBounds().y - shiftY, G.getBounds().width, G.getBounds().height);
-					g2.setColor(Color.CYAN);
-					g2.drawRect(G.getHitBox().x - shiftX, G.getHitBox().y - shiftY, G.getHitBox().width, G.getHitBox().height);
 				}
 			}
 		}
