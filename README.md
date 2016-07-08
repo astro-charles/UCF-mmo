@@ -8,9 +8,7 @@ A massively-multiplayer online role-playing games (MMORPG) is one of the most po
 
 ###Credits
 Brian Vermillion
-
 Charles Taylor
-
 Tyler Logdson
 
 Commits 1032
