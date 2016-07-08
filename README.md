@@ -7,6 +7,8 @@ A massively-multiplayer online role-playing games (MMORPG) is one of the most po
 
 
 ###Credits
-Orginal Code Base:  Brian
+Brian Vermillion
+Charles Taylor
+Tyler Logdson
 
 Commits 1032
